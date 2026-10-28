@@ -3,10 +3,11 @@ import Base from '../layouts/Base.astro';
 import Logo from '../components/Logo.astro';
 import Player from '../components/Player.astro';
 import site from '../data/site.json';
-import { getMixes, embedFor, shortDate } from '../lib/util';
+import { getMixes, getKolanut, embedFor, shortDate } from '../lib/util';
 const all = await getMixes();
 const audio = all.filter((m) => embedFor(m.data.url).kind !== 'youtube');
 const video = all.filter((m) => embedFor(m.data.url).kind === 'youtube');
+const episodes = await getKolanut();
 ---
 <Base title="sessions" current="sessions" bg={site.sessions_image} description="billysroom sessions — afro house, deep, melodic tech and soulful piano mixes, plus live sets on video.">
   <Logo page="sessions" sub="sessions" tone="page" />
@@ -14,6 +15,7 @@ const video = all.filter((m) => embedFor(m.data.url).kind === 'youtube');
   <div class="tabs" role="tablist" aria-label="sessions">
     <a class="pill small tab" role="tab" href="#mixes" data-tab="mixes">mixes · {audio.length}</a>
     {video.length > 0 && <a class="pill small tab" role="tab" href="#live" data-tab="live">live sets · {video.length}</a>}
+    <a class="pill small tab" role="tab" href="#kolanut" data-tab="kolanut">kolanut fm{episodes.length > 0 && ` · ${episodes.length}`}</a>
   </div>
 
   <section id="mixes" class="tab-panel" role="tabpanel" aria-label="mixes">
@@ -43,13 +45,34 @@ const video = all.filter((m) => embedFor(m.data.url).kind === 'youtube');
     </section>
   )}
 
-  <p style="text-align:center;margin-top:28px"><a class="pill small" href={site.soundcloud} target="_blank" rel="noopener">more on soundcloud ↗</a></p>
+  <section id="kolanut" class="tab-panel kolanut" role="tabpanel" aria-label="kolanut fm">
+    <div class="k-head">
+      <h2 class="k-title">kolanut fm</h2>
+      <p class="k-intro">{site.kolanut_intro}</p>
+      {episodes.length === 0 && <p class="k-soon">coming soon</p>}
+      {site.kolanut_instagram && <a class="pill small" href={site.kolanut_instagram} target="_blank" rel="noopener">follow kolanut fm for updates ↗</a>}
+    </div>
+    {episodes.map((e) => (
+      <article class="session">
+        <div>
+          <p class="k-ep">{e.data.episode}</p>
+          <h3 class="h3">{e.data.title}</h3>
+          <p>{e.data.guest && <>with {e.data.guest} · </>}{shortDate(e.data.date)}</p>
+          {e.data.description && <p>{e.data.description}</p>}
+        </div>
+        <Player url={e.data.url} title={`kolanut fm ${e.data.episode}: ${e.data.title}`} />
+      </article>
+    ))}
+  </section>
+
+  <p class="sc-more" style="text-align:center;margin-top:28px"><a class="pill small" href={site.soundcloud} target="_blank" rel="noopener">more on soundcloud ↗</a></p>
   <script>
     const tabs = [...document.querySelectorAll<HTMLAnchorElement>('[data-tab]')];
     const show = (id: string) => {
       if (!tabs.some((t) => t.dataset.tab === id)) id = 'mixes';
       tabs.forEach((t) => { const on = t.dataset.tab === id; t.setAttribute('aria-selected', String(on)); t.classList.toggle('on', on); });
       document.querySelectorAll<HTMLElement>('.tab-panel').forEach((p) => (p.hidden = p.id !== id));
+      const sc = document.querySelector<HTMLElement>('.sc-more'); if (sc) sc.hidden = id !== 'mixes';
     };
     tabs.forEach((t) => t.addEventListener('click', (e) => { e.preventDefault(); history.replaceState(null, '', '#' + t.dataset.tab); show(t.dataset.tab!); }));
     show(location.hash.slice(1));

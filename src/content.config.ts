@@ -50,4 +50,17 @@ const drops = defineCollection({
   }),
 });
 
-export const collections = { gigs, mixes, drops };
+const kolanut = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/kolanut' }),
+  schema: z.object({
+    episode: z.string(),
+    title: z.string(),
+    guest: z.string().optional().default(''),
+    date: z.coerce.date(),
+    url: z.string(),
+    description: z.string().optional().default(''),
+    hidden: z.boolean().optional().default(false),
+  }),
+});
+
+export const collections = { gigs, mixes, drops, kolanut };

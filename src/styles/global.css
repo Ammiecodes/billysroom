@@ -255,3 +255,11 @@ ul.clean { list-style: none; margin: 0; padding: 0; }
 .yr-off { display: none !important; }
 .backdrop.placeholder::after { display: none; }
 .past .set { font-family: var(--f-mono); font-size: 11px; color: var(--lagos); border: 1px solid rgba(254,234,59,.4); border-radius: 999px; padding: 1px 7px; margin-left: 8px; vertical-align: 1px; }
+
+/* kolanut fm tab */
+.kolanut { --wine: #7a1f2b; --cream: #f3e9d2; }
+.k-head { text-align: center; padding: 28px 18px; margin: 12px 0 8px; border-radius: 18px; background: linear-gradient(160deg, rgba(122,31,43,.55), rgba(33,71,50,.45)); border: 1px solid rgba(243,233,210,.25); }
+.k-title { font-family: var(--f-nav); font-weight: 800; font-size: 26px; letter-spacing: -.01em; color: var(--cream); margin: 0 0 8px; }
+.k-intro { color: rgba(243,233,210,.85); max-width: 380px; margin: 0 auto 14px; font-size: 15px; }
+.k-soon { font-family: var(--f-mono); font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--lagos); margin: 0 0 16px; }
+.k-ep { font-family: var(--f-mono); font-size: 13px; color: var(--cream); margin: 0 0 4px !important; }

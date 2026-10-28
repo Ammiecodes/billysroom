@@ -72,3 +72,8 @@ export function embedFor(url: string): EmbedInfo {
   if (mc) return { kind: 'mixcloud', src: `https://player-widget.mixcloud.com/widget/iframe/?hide_cover=1&light=0&feed=${encodeURIComponent(mc[1].endsWith('/') ? mc[1] : mc[1] + '/')}` };
   return { kind: 'link', href: u };
 }
+
+export async function getKolanut() {
+  const all = (await getCollection('kolanut')).filter((e) => !e.data.hidden);
+  return all.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+}

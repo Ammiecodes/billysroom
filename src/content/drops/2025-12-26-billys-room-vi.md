@@ -10,7 +10,7 @@ lineup:
   - "dcon"
   - "dam!"
   - "axara b2b sunrise"
-  - "billysroom (extended b2b with guest dj)"
+  - "billysroom b2b partyboy"
   - "naija house mafia"
 flyer: "/images/editions/billys-room-six.webp"
 ---
