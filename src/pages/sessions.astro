@@ -1,5 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
+import Logo from '../components/Logo.astro';
 import Player from '../components/Player.astro';
 import site from '../data/site.json';
 import { getMixes, embedFor, shortDate } from '../lib/util';
@@ -8,7 +9,7 @@ const audio = all.filter((m) => embedFor(m.data.url).kind !== 'youtube');
 const video = all.filter((m) => embedFor(m.data.url).kind === 'youtube');
 ---
 <Base title="sessions" current="sessions" bg={site.sessions_image} description="billysroom sessions — afro house, deep, melodic tech and soulful piano mixes, plus live sets on video.">
-  <h1 class="logo page">billy’s<br />room<small>sessions</small></h1>
+  <Logo page="sessions" sub="sessions" tone="page" />
 
   <div class="tabs" role="tablist" aria-label="sessions">
     <a class="pill small tab" role="tab" href="#mixes" data-tab="mixes">mixes · {audio.length}</a>

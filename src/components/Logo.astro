@@ -1,0 +1,10 @@
+---
+// Uses the uploaded logo for this page if there is one, otherwise the text wordmark.
+import site from '../data/site.json';
+const { page = 'home', sub = '', tone = '' } = Astro.props;
+const src = (site as any)[`logo_${page}`] || '';
+const alt = `billy’s room${sub ? ' ' + sub : ''}`;
+---
+{src
+  ? <h1 style="margin:0"><img class="logo-img" src={src} alt={alt} /></h1>
+  : <h1 class={`logo ${tone}`}>billy’s<br />room{sub && <small>{sub}</small>}<slot /></h1>}

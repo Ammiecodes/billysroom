@@ -1,5 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
+import Logo from '../components/Logo.astro';
 import site from '../data/site.json';
 import Newsletter from '../components/Newsletter.astro';
 import { getDrops, endsAt, longDate, monthName, shortDate } from '../lib/util';
@@ -9,7 +10,7 @@ const dayMonth = (d: Date) => `${monthName(d)} ${new Intl.DateTimeFormat('en-GB'
 const name = (x: any) => `${x.data.title}${x.data.edition ? ' ' + x.data.edition : ''}`;
 ---
 <Base title="billy’s room exclusive" current="exclusive" bg={site.exclusive_image} theme="exclusive-theme" description="billy’s room — intimate afro house parties in lagos. join the roommates for first access to invites.">
-  <h1 class="logo">billy’s<br />room<small>exclusive</small></h1>
+  <Logo page="exclusive" sub="exclusive" />
 
   <div class="ex-flow" data-drop-flow>
     <!-- a party is coming: it leads the page -->
@@ -30,27 +31,27 @@ const name = (x: any) => `${x.data.title}${x.data.edition ? ' ' + x.data.edition
             ? <span class="pill" style="width:min(320px,100%);margin:0 auto">invites closed — roommates hear first next time</span>
             : x.data.rsvp_url
               ? <a class="pill solid" style="width:min(320px,100%);margin:0 auto" href={x.data.rsvp_url} target="_blank" rel="noopener">{x.data.rsvp_label}</a>
-              : <a class="pill solid" style="width:min(320px,100%);margin:0 auto" href="#roommates">invites go to roommates first 💌</a>}
+              : <div><p class="line" style="font-size:15px;margin-bottom:12px">invites go to roommates first</p><Newsletter id="nl-ex-party" cta="join the roommates 💌" /></div>}
         </section>
       ))}
     </div>
 
-    <!-- nothing coming: a quiet intro, then the archive leads -->
-    <p class="ex-intro callout" data-if-drop="no" hidden>
-      intimate afro house nights in lagos, with friends on the decks.<br />the next edition drops to roommates first.
-      <a class="pill solid" href="#roommates" style="width:min(320px,100%);margin:18px auto 0">get first access 💌</a>
-    </p>
+    <!-- nothing coming: a quiet intro with the roommates signup, then the archive -->
+    <div class="ex-intro callout" id="roommates" data-if-drop="no" hidden>
+      <p>intimate afro house nights, with friends on the decks.<br />the next edition drops to roommates first.</p>
+      <Newsletter id="nl-ex" cta="join the roommates 💌" />
+    </div>
 
     <section class="ex-past" data-section>
       <h2 class="h2">past editions</h2>
       <ul class="clean editions" data-list="past-drops" data-hide-when-empty>
         {drops.map((x) => (
           <li class="edition" data-ends={endsAt(x.data.date)} data-when="past">
-            {x.data.flyer && <img src={x.data.flyer} alt="" loading="lazy" />}
+            {x.data.flyer && <a class="ed-flyer" href={x.data.flyer} target="_blank" rel="noopener" aria-label={`open the ${name(x)} flyer`}><img src={x.data.flyer} alt={`${name(x)} flyer`} loading="lazy" /></a>}
             <div>
               <p class="ed-date">{shortDate(x.data.date)}</p>
               <h3 class="h3">{name(x)}</h3>
-              {(x.data.venue || x.data.city) && <p class="meta">{[x.data.venue, x.data.city].filter(Boolean).join(' · ')}</p>}
+              {(x.data.venue || x.data.city) && <p class="meta">{[x.data.venue, `${x.data.city} ${x.data.country}`.trim()].filter(Boolean).join(' · ')}</p>}
               {x.data.lineup.length > 0 && <p class="ed-lineup">{x.data.lineup.join('  ·  ')}</p>}
             </div>
           </li>
@@ -58,10 +59,5 @@ const name = (x: any) => `${x.data.title}${x.data.edition ? ' ' + x.data.edition
       </ul>
     </section>
 
-    <section id="roommates" class="ex-join callout">
-      <h2 class="h3" style="color:var(--yellow);font-size:22px">become a roomie</h2>
-      <p>get first access to my exclusive parties, tickets to featured events, inside gist and really nice perks only shared with my circle.</p>
-      <Newsletter id="nl-ex" cta="join the roommates 💌" />
-    </section>
   </div>
 </Base>

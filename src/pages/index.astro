@@ -1,5 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
+import Logo from '../components/Logo.astro';
 import Player from '../components/Player.astro';
 import Newsletter from '../components/Newsletter.astro';
 import site from '../data/site.json';
@@ -15,7 +16,7 @@ const upcoming = [
 ---
 <Base current="home" bg={site.hero_image}>
   <section class="hero">
-    <h1 class="logo">billy’s<br />room<span class="sr"> — {site.tagline}</span></h1>
+    <Logo page="home"><span class="sr"> — {site.tagline}</span></Logo>
 
     <div data-next>
       {upcoming.map((u) => (

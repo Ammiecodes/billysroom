@@ -7,9 +7,11 @@ import { getGigs, getDrops, endsAt, shortDate, longDate } from '../lib/util';
 const gigs = await getGigs();
 const drops = await getDrops();
 const history = [
-  ...gigs.map((g) => ({ date: g.data.date, name: `${g.data.venue}`, place: `${g.data.city} ${g.data.country}` })),
-  ...drops.map((x) => ({ date: x.data.date, name: x.data.title, place: x.data.city })),
+  ...gigs.map((g) => ({ date: g.data.date, name: `${g.data.venue}`, place: `${g.data.city} ${g.data.country}`, set: g.data.set_type })),
+  ...drops.map((x) => ({ date: x.data.date, name: `${x.data.title}${x.data.edition ? ' ' + x.data.edition : ''}`, place: `${x.data.city} ${x.data.country}`, set: 'host', href: '/exclusive' })),
 ].sort((a, b) => b.date.getTime() - a.date.getTime());
+const yearOf = (d: Date) => new Intl.DateTimeFormat('en-GB', { timeZone: 'Africa/Lagos', year: 'numeric' }).format(d);
+const years = [...new Set(history.map((h) => yearOf(h.date)))];
 ---
 <Base title="dates" current="dates" bg={site.dates_image} description="where billysroom is playing next — upcoming gigs, tickets and past dates.">
   <div class="narrow">
@@ -34,11 +36,36 @@ const history = [
     <hr class="divider" />
     <section data-section>
       <h2 class="h2">past dates</h2>
+      <div class="years" role="group" aria-label="filter past dates by year" data-years>
+        {years.map((y) => <button type="button" data-year={y} aria-pressed="false">{y}</button>)}
+        <button type="button" data-year="all" aria-pressed="false">all</button>
+      </div>
       <ul class="clean past" data-list="past" data-hide-when-empty>
         {history.map((h) => (
-          <li data-ends={endsAt(h.date)} data-when="past"><span>{h.name} · {h.place}</span><span>{shortDate(h.date)}</span></li>
+          <li data-ends={endsAt(h.date)} data-when="past" data-year={yearOf(h.date)}><span>{(h as any).href ? <a href={(h as any).href}>{h.name}</a> : h.name} · {h.place}{h.set && <span class="set">{h.set}</span>}</span><span>{shortDate(h.date)}</span></li>
         ))}
       </ul>
     </section>
   </div>
+  <script>
+    // Year filter: shows the most recent year by default; years with no past dates yet are hidden.
+    // runs after the layout script has sorted upcoming vs past
+    document.addEventListener('DOMContentLoaded', () => {
+    const box = document.querySelector<HTMLElement>('[data-years]');
+    const items = [...document.querySelectorAll<HTMLElement>('ul.past li[data-year]')];
+    if (box) {
+      const past = items.filter((li) => !li.hidden);
+      const btns = [...box.querySelectorAll<HTMLButtonElement>('button')];
+      const live = new Set(past.map((li) => li.dataset.year));
+      btns.forEach((b) => { if (b.dataset.year !== 'all' && !live.has(b.dataset.year)) b.hidden = true; });
+      const pick = (y: string) => {
+        btns.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.year === y)));
+        past.forEach((li) => li.classList.toggle('yr-off', y !== 'all' && li.dataset.year !== y));
+      };
+      btns.forEach((b) => b.addEventListener('click', () => pick(b.dataset.year!)));
+      if (live.size < 2) box.hidden = true;
+      pick(live.size < 2 ? 'all' : btns.find((b) => !b.hidden)!.dataset.year!);
+    }
+    });
+  </script>
 </Base>

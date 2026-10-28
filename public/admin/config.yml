@@ -34,7 +34,8 @@ collections:
       - { name: country, label: flag, widget: string, required: false, hint: 'e.g. 🇳🇬 🇰🇪 🇬🇭 🇨🇦' }
       - { name: date, label: date & start time, widget: datetime, input_timezone: Africa/Lagos, hint: 'pick the date and when your set or the night starts (lagos time).' }
       - { name: time_label, label: time to show, widget: string, required: false, hint: 'optional — e.g. "10pm" or "12am (late)". leave blank to use the start time.' }
-      - { name: genres, label: genres / set type, widget: string, required: false, hint: 'e.g. afro house, 3-step' }
+      - { name: genres, label: genres, widget: string, required: false, hint: 'e.g. afro house, 3-step' }
+      - { name: set_type, label: set type, widget: string, required: false, hint: 'e.g. b2b, b3b, opening set — leave blank for a solo set' }
       - { name: ticket_url, label: ticket link, widget: string, required: false }
       - { name: ticket_label, label: ticket button text, widget: string, required: false, default: 'get tickets 🎫' }
       - { name: flyer, label: flyer, widget: image, required: false }
@@ -50,10 +51,11 @@ collections:
     summary: '{{title}} {{edition}} · {{date}}'
     sortable_fields: [date, title]
     fields:
-      - { name: title, label: party name, widget: string, default: 'billy’s room exclusive' }
+      - { name: title, label: party name, widget: string, default: 'exclusive' }
       - { name: edition, label: edition, widget: string, required: false, hint: 'e.g. viii — shows on past editions' }
       - { name: date, label: date & doors time, widget: datetime, input_timezone: Africa/Lagos }
       - { name: city, label: city, widget: string, required: false, default: lagos }
+      - { name: country, label: flag, widget: string, required: false, default: '🇳🇬' }
       - { name: venue, label: venue, widget: string, required: false, hint: 'e.g. private loft, secret location' }
       - { name: doors, label: doors open, widget: string, required: false, hint: 'e.g. 9pm' }
       - { name: lineup, label: djs, widget: list, required: false, hint: 'one dj per line' }
@@ -112,6 +114,10 @@ collections:
           - { name: press_photos_url, label: hi-res photos folder link, widget: string, required: false }
           - { name: press_photos, label: press photos, widget: list, field: { name: photo, label: photo, widget: image }, required: false }
           - { name: rider_file, label: tech rider (pdf), widget: file, required: false }
+          - { name: logo_home, label: logo — home, widget: image, required: false, hint: 'svg or transparent png' }
+          - { name: logo_sessions, label: logo — sessions, widget: image, required: false }
+          - { name: logo_exclusive, label: logo — exclusive, widget: image, required: false }
+          - { name: logo_press, label: logo — press & booking, widget: image, required: false }
           - { name: hero_image, label: home page photo, widget: image, required: false }
           - { name: sessions_image, label: sessions page photo, widget: image, required: false }
           - { name: dates_image, label: dates page photo, widget: image, required: false }
