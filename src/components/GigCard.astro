@@ -1,0 +1,11 @@
+---
+import { longDate, timeOf, endsAt } from '../lib/util';
+const { gig, when = 'upcoming' } = Astro.props;
+const d = gig.data;
+---
+<article class="gig" data-ends={endsAt(d.date)} data-when={when}>
+  <h3 class="h3">{d.venue} | {d.city} {d.country}</h3>
+  <p class="meta">{longDate(d.date)} | {d.time_label || timeOf(d.date)}</p>
+  {d.genres && <p class="meta" style="margin:0">{d.genres}</p>}
+  {d.ticket_url && <a class="pill small" href={d.ticket_url} target="_blank" rel="noopener">{d.ticket_label}</a>}
+</article>

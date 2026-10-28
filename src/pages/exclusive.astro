@@ -1,0 +1,48 @@
+---
+import Base from '../layouts/Base.astro';
+import site from '../data/site.json';
+import Newsletter from '../components/Newsletter.astro';
+import { getDrops, endsAt, longDate, monthName, shortDate } from '../lib/util';
+const drops = await getDrops();
+const upcoming = [...drops].sort((a, b) => a.data.date.getTime() - b.data.date.getTime());
+const dayMonth = (d: Date) => `${monthName(d)} ${new Intl.DateTimeFormat('en-GB', { timeZone: 'Africa/Lagos', day: 'numeric' }).format(d)}`;
+---
+<Base title="billy’s room exclusive" current="exclusive" bg={site.exclusive_image} theme="exclusive-theme" description="billy’s room — intimate afro house parties in lagos. join the roommates for first access to invites.">
+  <h1 class="logo">billy’s<br />room<small>exclusive</small></h1>
+
+  <div data-list="drops">
+    {upcoming.map((x) => (
+      <section class="flyer-card" data-ends={endsAt(x.data.date)} data-when="upcoming">
+        {x.data.flyer && <img class="flyer-img" src={x.data.flyer} alt={`flyer for ${x.data.title}, ${longDate(x.data.date)}`} />}
+        <p class="date">{dayMonth(x.data.date)}</p>
+        {x.data.venue && <p class="line">venue: {x.data.venue}</p>}
+        {x.data.doors && <p class="line">doors open: {x.data.doors}</p>}
+        {x.data.lineup.length > 0 && (
+          <>
+            <p class="line" style="margin-top:18px;font-size:15px">djs</p>
+            <ul class="lineup">{x.data.lineup.map((n) => <li>{n}</li>)}</ul>
+          </>
+        )}
+        {x.data.sold_out
+          ? <span class="pill" style="width:min(320px,100%);margin:0 auto">invites closed — roommates hear first next time</span>
+          : x.data.rsvp_url && <a class="pill solid" style="width:min(320px,100%);margin:0 auto" href={x.data.rsvp_url} target="_blank" rel="noopener">{x.data.rsvp_label}</a>}
+      </section>
+    ))}
+  </div>
+
+  <section id="roommates" class="callout" style="margin-top:48px">
+    <h2 class="h3" style="color:var(--yellow);font-size:22px">become a roomie</h2>
+    <p>get first access to my exclusive parties, tickets to featured events, inside gist and really nice perks only shared with my circle.</p>
+    <Newsletter id="nl-ex" cta="join the roommates 💌" />
+    <p data-empty="drops" hidden style="margin-top:16px">the next billy’s room drops to roommates first.</p>
+  </section>
+
+  <section data-section style="margin-top:48px">
+    <h2 class="h2">past editions</h2>
+    <ul class="clean past narrow" data-list="past-drops" data-hide-when-empty>
+      {drops.map((x) => (
+        <li data-ends={endsAt(x.data.date)} data-when="past"><span>{x.data.title}{x.data.venue ? ` · ${x.data.venue}` : ''}</span><span>{shortDate(x.data.date)}</span></li>
+      ))}
+    </ul>
+  </section>
+</Base>

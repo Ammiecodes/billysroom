@@ -1,0 +1,31 @@
+---
+import Base from '../layouts/Base.astro';
+import site from '../data/site.json';
+import { getGigs, getDrops, endsAt, longDate } from '../lib/util';
+const gigs = await getGigs();
+const drops = await getDrops();
+const upcoming = [
+  ...gigs.map((g) => ({ date: g.data.date, label: `${g.data.venue} | ${g.data.city}`, href: '/dates' })),
+  ...drops.map((x) => ({ date: x.data.date, label: `${x.data.title}${x.data.city ? ' | ' + x.data.city : ''}`, href: '/exclusive' })),
+].sort((a, b) => a.date.getTime() - b.date.getTime());
+---
+<Base current="home" bg={site.hero_image}>
+  <h1 class="logo">billy’s<br />room<span class="sr"> — {site.tagline}</span></h1>
+
+  <div data-next>
+    {upcoming.map((u) => (
+      <a class="next-up" href={u.href} data-ends={endsAt(u.date)} data-when="upcoming">
+        <b>next up ✦</b>{u.label} · {longDate(u.date)}
+      </a>
+    ))}
+  </div>
+
+  <div class="pills">
+    <a class="pill" href="/exclusive">billy’s room exclusive 🇳🇬</a>
+    <a class="pill" href="/sessions">room sessions / mixes</a>
+    <a class="pill" href="/dates">schedule / dates</a>
+    <a class="pill" href="/press#book">book me</a>
+    <a class="pill" href={`mailto:${site.demo_email}?subject=demo%20for%20billysroom`}>send demos / tracks</a>
+    <a class="pill solid" href="/exclusive#roommates">join the roommates 💌</a>
+  </div>
+</Base>

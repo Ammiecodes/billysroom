@@ -1,0 +1,19 @@
+---
+import site from '../data/site.json';
+const { links = ['instagram', 'soundcloud', 'youtube', 'email'] } = Astro.props;
+const all: Record<string, { href: string; label: string; svg: string }> = {
+  instagram: { href: site.instagram, label: 'Instagram', svg: '<rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="17.3" cy="6.7" r="1.2"/>' },
+  soundcloud: { href: site.soundcloud, label: 'SoundCloud', svg: '<path d="M10 8.5v9h8.2a3.3 3.3 0 0 0 .4-6.6A5 5 0 0 0 10 8.5Z"/><rect x="7.4" y="10" width="1.5" height="7.5" rx=".75"/><rect x="4.8" y="11.5" width="1.5" height="6" rx=".75"/><rect x="2.2" y="13" width="1.5" height="4.5" rx=".75"/>' },
+  youtube: { href: site.youtube, label: 'YouTube', svg: '<rect x="2" y="5" width="20" height="14" rx="4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M10 9v6l5-3z"/>' },
+  email: { href: `mailto:${site.booking_email}`, label: 'Email', svg: '<rect x="3" y="5" width="18" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="m4 7 8 6 8-6" fill="none" stroke="currentColor" stroke-width="2"/>' },
+};
+const items = links.map((k: string) => all[k]).filter((x: any) => x && x.href);
+---
+<nav class="foot" aria-label="Social links">
+  {items.map((i: any) => (
+    <a href={i.href} target={i.href.startsWith('http') ? '_blank' : undefined} rel="noopener">
+      <svg viewBox="0 0 24 24" aria-hidden="true" set:html={i.svg} />
+      <span class="sr">{i.label}</span>
+    </a>
+  ))}
+</nav>

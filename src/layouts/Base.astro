@@ -1,0 +1,81 @@
+---
+import '../styles/global.css';
+import site from '../data/site.json';
+import Icons from '../components/Icons.astro';
+const { title, description = site.tagline, bg = '', theme = '', current = '', image = '' } = Astro.props;
+const fullTitle = title ? `${title} – [billysroom]` : '[billysroom]';
+const nav = [
+  { href: '/', label: 'dj', key: 'home' },
+  { href: '/sessions', label: 'sessions', key: 'sessions' },
+  { href: '/dates', label: 'dates', key: 'dates' },
+  { href: '/exclusive', label: 'exclusive', key: 'exclusive' },
+  { href: '/press', label: 'press', key: 'press' },
+];
+const ogImage = image || bg || site.hero_image;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+---
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{fullTitle}</title>
+  <meta name="description" content={description} />
+  <link rel="canonical" href={canonical} />
+  <meta name="theme-color" content="#000000" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="[billysroom]" />
+  <meta property="og:title" content={fullTitle} />
+  <meta property="og:description" content={description} />
+  <meta property="og:url" content={canonical} />
+  {ogImage && <meta property="og:image" content={new URL(ogImage, Astro.site)} />}
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <slot name="head" />
+</head>
+<body class={theme}>
+  <div class={`backdrop ${bg ? '' : 'placeholder'}`} style={bg ? `background-image:url(${bg})` : ''} aria-hidden="true"></div>
+  <nav class="site-nav" aria-label="Main">
+    {nav.map((n) => <a href={n.href} aria-current={current === n.key ? 'page' : undefined}>{n.label}</a>)}
+  </nav>
+  <main>
+    <slot />
+  </main>
+  <Icons />
+  <script>
+    // Date-driven content: anything with data-ends flips from "upcoming" to "past"
+    // in the visitor's browser, so the site never shows a stale gig, even between deploys.
+    const now = Date.now();
+    document.querySelectorAll<HTMLElement>('[data-ends]').forEach((el) => {
+      const past = Number(el.dataset.ends) <= now;
+      const want = el.dataset.when; // "upcoming" | "past"
+      el.hidden = want === 'upcoming' ? past : !past;
+    });
+    document.querySelectorAll<HTMLElement>('[data-new-until]').forEach((el) => (el.hidden = Number(el.dataset.newUntil) <= now));
+    // Empty-state messages for lists that ended up with nothing visible
+    document.querySelectorAll<HTMLElement>('[data-list]').forEach((list) => {
+      const visible = list.querySelectorAll('[data-ends]:not([hidden])').length;
+      const empty = document.querySelector<HTMLElement>(`[data-empty="${list.dataset.list}"]`);
+      if (empty) empty.hidden = visible > 0;
+      if (list.dataset.hideWhenEmpty !== undefined) list.closest<HTMLElement>('[data-section]')!.hidden = visible === 0;
+    });
+    // "next up" picks the first upcoming entry
+    document.querySelectorAll<HTMLElement>('[data-next]').forEach((box) => {
+      const first = box.querySelector<HTMLElement>('[data-ends]:not([hidden])');
+      box.querySelectorAll<HTMLElement>('[data-ends]').forEach((el) => (el.hidden = el !== first));
+      box.hidden = !first;
+    });
+    // YouTube: load the real player only when tapped (keeps pages fast)
+    document.querySelectorAll<HTMLButtonElement>('button[data-yt]').forEach((b) => {
+      b.addEventListener('click', () => {
+        const f = document.createElement('iframe');
+        f.src = `https://www.youtube-nocookie.com/embed/${b.dataset.yt}?autoplay=1`;
+        f.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
+        f.title = b.getAttribute('aria-label') || 'YouTube video';
+        b.replaceChildren(f);
+        b.style.cursor = 'default';
+      }, { once: true });
+    });
+  </script>
+</body>
+</html>

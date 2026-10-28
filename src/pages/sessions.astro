@@ -1,0 +1,43 @@
+---
+import Base from '../layouts/Base.astro';
+import Player from '../components/Player.astro';
+import site from '../data/site.json';
+import { getMixes, embedFor, shortDate } from '../lib/util';
+const all = await getMixes();
+const audio = all.filter((m) => embedFor(m.data.url).kind !== 'youtube');
+const video = all.filter((m) => embedFor(m.data.url).kind === 'youtube');
+---
+<Base title="sessions" current="sessions" bg={site.sessions_image} description="billysroom sessions — afro house, deep, melodic tech and soulful piano mixes, plus live sets on video.">
+  <h1 class="logo page">billy’s<br />room<small>sessions</small></h1>
+
+  <section aria-labelledby="mixes">
+    <h2 class="h2" id="mixes">mixes</h2>
+    {audio.map((m) => (
+      <article class="session">
+        <div>
+          <h3 class="h3">{m.data.title}<span class="tag" data-new-until={m.data.date.getTime() + 60 * 86400_000} hidden>new</span></h3>
+          <p>dj: billysroom · {shortDate(m.data.date)}</p>
+          {m.data.description && <p>{m.data.description}</p>}
+        </div>
+        <Player url={m.data.url} title={m.data.title} />
+      </article>
+    ))}
+  </section>
+
+  {video.length > 0 && (
+    <section aria-labelledby="videos">
+      <h2 class="h2" id="videos">live sets</h2>
+      {video.map((m) => (
+        <article class="session">
+          <div>
+            <h3 class="h3">{m.data.title}</h3>
+            {m.data.description && <p>{m.data.description}</p>}
+          </div>
+          <Player url={m.data.url} title={m.data.title} />
+        </article>
+      ))}
+    </section>
+  )}
+
+  <p style="text-align:center;margin-top:28px"><a class="pill small" href={site.soundcloud} target="_blank" rel="noopener">more on soundcloud ↗</a></p>
+</Base>

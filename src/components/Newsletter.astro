@@ -1,0 +1,9 @@
+---
+import site from '../data/site.json';
+const { cta = 'join the roommates', id = 'nl' } = Astro.props;
+---
+<form class="signup" action={`https://app.kit.com/forms/${site.kit_form_id}/subscriptions`} method="post" target="_blank">
+  <label class="sr" for={id}>email address</label>
+  <input id={id} type="email" name="email_address" placeholder="💌 email address" required autocomplete="email" />
+  <button class="pill solid" type="submit">{cta}</button>
+</form>

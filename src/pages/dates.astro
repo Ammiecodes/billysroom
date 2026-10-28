@@ -1,0 +1,44 @@
+---
+import Base from '../layouts/Base.astro';
+import site from '../data/site.json';
+import GigCard from '../components/GigCard.astro';
+import Newsletter from '../components/Newsletter.astro';
+import { getGigs, getDrops, endsAt, shortDate, longDate } from '../lib/util';
+const gigs = await getGigs();
+const drops = await getDrops();
+const history = [
+  ...gigs.map((g) => ({ date: g.data.date, name: `${g.data.venue}`, place: `${g.data.city} ${g.data.country}` })),
+  ...drops.map((x) => ({ date: x.data.date, name: x.data.title, place: x.data.city })),
+].sort((a, b) => b.date.getTime() - a.date.getTime());
+---
+<Base title="dates" current="dates" bg={site.dates_image} description="where billysroom is playing next — upcoming gigs, tickets and past dates.">
+  <div class="narrow">
+    <h1 class="h2">upcoming dates</h1>
+    <div class="gigs" data-list="up">
+      {[...gigs.map((g) => ({ t: 'gig', d: g.data.date, g })), ...drops.map((x) => ({ t: 'drop', d: x.data.date, x }))]
+        .sort((a, b) => a.d.getTime() - b.d.getTime())
+        .map((i) => i.t === 'gig' ? <GigCard gig={i.g} when="upcoming" /> : (
+          <article class="gig" data-ends={endsAt(i.x.data.date)} data-when="upcoming">
+            <h3 class="h3">{i.x.data.title} | {i.x.data.city} 🔑</h3>
+            <p class="meta">{longDate(i.x.data.date)}{i.x.data.doors && ` | doors ${i.x.data.doors}`}</p>
+            <p class="meta" style="margin:0">invite only</p>
+            <a class="pill small" href="/exclusive">get an invite 🎟️</a>
+          </article>
+        ))}
+    </div>
+    <div class="callout" data-empty="up" hidden>
+      <p>no public dates announced right now. roommates hear about new dates and private parties first.</p>
+      <Newsletter id="nl-dates" cta="tell me first" />
+    </div>
+
+    <hr class="divider" />
+    <section data-section>
+      <h2 class="h2">past dates</h2>
+      <ul class="clean past" data-list="past" data-hide-when-empty>
+        {history.map((h) => (
+          <li data-ends={endsAt(h.date)} data-when="past"><span>{h.name} · {h.place}</span><span>{shortDate(h.date)}</span></li>
+        ))}
+      </ul>
+    </section>
+  </div>
+</Base>

@@ -1,0 +1,23 @@
+{
+  "name": "billysroom",
+  "type": "module",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "astro dev",
+    "copy-cms": "node scripts/copy-cms.mjs",
+    "build": "npm run copy-cms && astro build",
+    "preview": "astro preview"
+  },
+  "dependencies": {
+    "@fontsource/ibm-plex-mono": "^5.3.0",
+    "@fontsource/jost": "^5.3.0",
+    "@fontsource/nunito": "^5.3.0",
+    "@fontsource/shantell-sans": "^5.3.0",
+    "@sveltia/cms": "^0.253.1",
+    "astro": "^7.4.3"
+  },
+  "engines": {
+    "node": ">=22.23.4"
+  }
+}

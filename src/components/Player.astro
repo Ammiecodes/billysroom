@@ -1,0 +1,18 @@
+---
+import { embedFor } from '../lib/util';
+const { url, title = '' } = Astro.props;
+const e = embedFor(url);
+---
+{e.kind === 'soundcloud' && (
+  <iframe class="embed sc" title={`${title} on SoundCloud`} loading="lazy" allow="autoplay" src={e.src}></iframe>
+)}
+{e.kind === 'mixcloud' && (
+  <iframe class="embed sc" style="height:120px" title={`${title} on Mixcloud`} loading="lazy" allow="autoplay" src={e.src}></iframe>
+)}
+{e.kind === 'youtube' && (
+  <button class="yt" type="button" data-yt={e.id} aria-label={`Play ${title} on YouTube`}
+    style={`background-image:url(https://i.ytimg.com/vi/${e.id}/hqdefault.jpg)`}>
+    <span class="play" aria-hidden="true"></span>
+  </button>
+)}
+{e.kind === 'link' && <a class="pill small" href={e.href} target="_blank" rel="noopener">listen ↗</a>}

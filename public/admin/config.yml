@@ -1,0 +1,113 @@
+# billysroom admin — edit gigs, mixes, exclusive parties and site info.
+# Every "publish" saves a change to GitHub and the site rebuilds in about a minute.
+backend:
+  name: github
+  repo: ammiecodes/billysroom
+  branch: main
+  commit_messages:
+    create: 'add {{collection}}: {{slug}}'
+    update: 'update {{collection}}: {{slug}}'
+    delete: 'remove {{collection}}: {{slug}}'
+
+site_url: https://billysroom.today
+display_url: https://billysroom.today
+logo:
+  src: /favicon.svg
+publish_mode: simple
+
+media_folder: public/images/uploads
+public_folder: /images/uploads
+
+collections:
+  - name: gigs
+    label: gigs / dates
+    label_singular: gig
+    description: public gigs. they show as "upcoming" until the night is over, then move to "past dates" on their own.
+    folder: src/content/gigs
+    create: true
+    slug: '{{year}}-{{month}}-{{day}}-{{venue}}'
+    summary: '{{venue}} · {{city}} · {{date}}'
+    sortable_fields: [date, venue, city]
+    fields:
+      - { name: venue, label: venue / event name, widget: string }
+      - { name: city, label: city, widget: string }
+      - { name: country, label: flag, widget: string, required: false, hint: 'e.g. 🇳🇬 🇰🇪 🇬🇭 🇨🇦' }
+      - { name: date, label: date & start time, widget: datetime, input_timezone: Africa/Lagos, hint: 'pick the date and when your set or the night starts (lagos time).' }
+      - { name: time_label, label: time to show, widget: string, required: false, hint: 'optional — e.g. "10pm" or "12am (late)". leave blank to use the start time.' }
+      - { name: genres, label: genres / set type, widget: string, required: false, hint: 'e.g. afro house, 3-step' }
+      - { name: ticket_url, label: ticket link, widget: string, required: false }
+      - { name: ticket_label, label: ticket button text, widget: string, required: false, default: 'get tickets 🎫' }
+      - { name: flyer, label: flyer, widget: image, required: false }
+      - { name: hidden, label: hide from site, widget: boolean, required: false, default: false }
+
+  - name: drops
+    label: billy’s room exclusive
+    label_singular: party
+    description: billy’s room parties. the next one shows big on /exclusive with the invite button; past ones become "past editions".
+    folder: src/content/drops
+    create: true
+    slug: '{{year}}-{{month}}-{{day}}-{{title}}'
+    summary: '{{title}} · {{date}}'
+    sortable_fields: [date, title]
+    fields:
+      - { name: title, label: party name, widget: string, default: 'billy’s room exclusive' }
+      - { name: date, label: date & doors time, widget: datetime, input_timezone: Africa/Lagos }
+      - { name: city, label: city, widget: string, required: false, default: lagos }
+      - { name: venue, label: venue, widget: string, required: false, hint: 'e.g. private loft, secret location' }
+      - { name: doors, label: doors open, widget: string, required: false, hint: 'e.g. 9pm' }
+      - { name: lineup, label: djs, widget: list, required: false, hint: 'one dj per line' }
+      - { name: flyer, label: flyer, widget: image, required: false }
+      - { name: rsvp_url, label: rsvp / invite link, widget: string, required: false, hint: 'the link for this drop. leave blank to only collect roommate signups.' }
+      - { name: rsvp_label, label: invite button text, widget: string, required: false, default: 'get an invite 🎟️' }
+      - { name: sold_out, label: invites closed, widget: boolean, required: false, default: false }
+      - { name: hidden, label: hide from site, widget: boolean, required: false, default: false }
+
+  - name: mixes
+    label: sessions / mixes
+    label_singular: mix
+    description: paste a soundcloud, youtube or mixcloud link — the player is made for you. youtube links show under "live sets".
+    folder: src/content/mixes
+    create: true
+    slug: '{{title}}'
+    summary: '{{title}} · {{date}}'
+    sortable_fields: [date, title]
+    fields:
+      - { name: title, label: title, widget: string, hint: 'e.g. session eleven: something' }
+      - { name: url, label: link, widget: string, hint: 'soundcloud, youtube or mixcloud link' }
+      - { name: date, label: date, widget: datetime, time_format: false, hint: 'newer mixes show first; mixes from the last 60 days get a "new" tag.' }
+      - { name: description, label: one-line description, widget: string, required: false }
+      - { name: hidden, label: hide from site, widget: boolean, required: false, default: false }
+
+  - name: settings
+    label: site info
+    files:
+      - name: site
+        label: bio, links & contacts
+        file: src/data/site.json
+        format: json
+        fields:
+          - { name: name, label: name, widget: string }
+          - { name: tagline, label: tagline (google & link previews), widget: string }
+          - { name: based_in, label: based in, widget: string }
+          - { name: bio_short, label: short bio, widget: text }
+          - { name: bio_long, label: full bio (press page), widget: text }
+          - { name: genres, label: genres, widget: list }
+          - { name: played_at, label: played at, widget: list }
+          - { name: booking_email, label: booking email, widget: string }
+          - { name: demo_email, label: demos email, widget: string }
+          - { name: whatsapp, label: whatsapp number, widget: string, required: false }
+          - { name: instagram, label: instagram link, widget: string }
+          - { name: soundcloud, label: soundcloud link, widget: string }
+          - { name: youtube, label: youtube link, widget: string, required: false }
+          - { name: x, label: x link, widget: string, required: false }
+          - { name: kit_form_id, label: kit form id, widget: string, hint: 'the number in your kit form link' }
+          - { name: newsletter_url, label: newsletter page, widget: string }
+          - { name: press_kit_url, label: notion press kit, widget: string, required: false }
+          - { name: press_photos_url, label: hi-res photos folder link, widget: string, required: false }
+          - { name: press_photos, label: press photos, widget: list, field: { name: photo, label: photo, widget: image }, required: false }
+          - { name: rider_file, label: tech rider (pdf), widget: file, required: false }
+          - { name: hero_image, label: home page photo, widget: image, required: false }
+          - { name: sessions_image, label: sessions page photo, widget: image, required: false }
+          - { name: dates_image, label: dates page photo, widget: image, required: false }
+          - { name: exclusive_image, label: exclusive page background, widget: image, required: false }
+          - { name: press_image, label: press page photo, widget: image, required: false }

@@ -1,0 +1,73 @@
+---
+import Base from '../layouts/Base.astro';
+import site from '../data/site.json';
+const paras = site.bio_long.split(/\n\s*\n/);
+const wa = site.whatsapp ? `https://wa.me/${site.whatsapp.replace(/\D/g, '')}` : '';
+---
+<Base title="press & booking" current="press" bg={site.press_image} description={`billysroom press kit and booking — ${site.tagline}`}>
+  <div class="narrow">
+    <h1 class="logo page">billy’s<br />room<small>press & booking</small></h1>
+
+    <section class="prose" aria-label="bio">
+      {paras.map((p) => <p>{p}</p>)}
+    </section>
+
+    <h2 class="h2">sound</h2>
+    <div class="chips">{site.genres.map((g) => <span class="chip">{g}</span>)}</div>
+
+    {site.played_at.length > 0 && (
+      <>
+        <h2 class="h2">played</h2>
+        <div class="chips">{site.played_at.map((g) => <span class="chip">{g}</span>)}</div>
+      </>
+    )}
+
+    <h2 class="h2">press kit</h2>
+    {site.press_photos.length > 0 && (
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-bottom:14px">
+        {site.press_photos.map((p: string) => <a href={p} download><img src={p} alt="billysroom press photo" style="border-radius:10px;aspect-ratio:4/5;object-fit:cover" loading="lazy" /></a>)}
+      </div>
+    )}
+    <div class="pills">
+      {site.press_photos_url && <a class="pill" href={site.press_photos_url} target="_blank" rel="noopener">hi-res photos ↗</a>}
+      {site.rider_file && <a class="pill" href={site.rider_file} download>tech rider ↓</a>}
+      <a class="pill" href="/sessions">listen to sessions</a>
+    </div>
+
+    <hr class="divider" />
+
+    <section id="book" aria-labelledby="book-h">
+      <h2 class="h2" id="book-h">book billysroom</h2>
+      <form class="form" id="booking" data-to={site.booking_email}>
+        <label>your name<input name="name" required autocomplete="name" /></label>
+        <label>event / promoter<input name="event" required /></label>
+        <label>date<input name="date" type="date" required /></label>
+        <label>city & venue<input name="where" required /></label>
+        <label>set length & time slot<input name="slot" placeholder="e.g. 2 hrs, 11pm–1am" /></label>
+        <label>fee / budget<input name="budget" placeholder="optional" /></label>
+        <label>anything else<textarea name="notes" rows="4"></textarea></label>
+        <button class="pill solid" type="submit">send booking request</button>
+        <p class="meta" style="text-align:center">opens your email app with the details filled in.</p>
+      </form>
+      <p class="meta" style="text-align:center;margin-top:18px">
+        bookings: <a href={`mailto:${site.booking_email}`}>{site.booking_email}</a>
+        {wa && <> · <a href={wa} target="_blank" rel="noopener">whatsapp</a></>}
+        <br />demos / tracks: <a href={`mailto:${site.demo_email}`}>{site.demo_email}</a>
+      </p>
+    </section>
+  </div>
+  <script>
+    const f = document.getElementById('booking') as HTMLFormElement | null;
+    f?.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const d = new FormData(f);
+      const g = (k: string) => String(d.get(k) || '').trim();
+      const subject = `booking request: ${g('event')} — ${g('date')}`;
+      const body = [
+        `name: ${g('name')}`, `event / promoter: ${g('event')}`, `date: ${g('date')}`,
+        `city & venue: ${g('where')}`, `set length & slot: ${g('slot')}`, `fee / budget: ${g('budget')}`, '', g('notes'),
+      ].join('\n');
+      location.href = `mailto:${f.dataset.to}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    });
+  </script>
+</Base>
