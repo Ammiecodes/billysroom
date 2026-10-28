@@ -13,7 +13,7 @@ const history = [
 const yearOf = (d: Date) => new Intl.DateTimeFormat('en-GB', { timeZone: 'Africa/Lagos', year: 'numeric' }).format(d);
 const years = [...new Set(history.map((h) => yearOf(h.date)))];
 ---
-<Base title="dates" current="dates" bg={site.dates_image} description="where billysroom is playing next — upcoming gigs, tickets and past dates.">
+<Base tone="deep" title="dates" current="dates" bg={site.dates_image} description="where billysroom is playing next — upcoming gigs, tickets and past dates.">
   <div class="narrow">
     <h1 class="h2">upcoming dates</h1>
     <div class="gigs" data-list="up">

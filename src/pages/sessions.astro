@@ -9,13 +9,13 @@ const audio = all.filter((m) => embedFor(m.data.url).kind !== 'youtube');
 const video = all.filter((m) => embedFor(m.data.url).kind === 'youtube');
 const episodes = await getKolanut();
 ---
-<Base title="sessions" current="sessions" bg={site.sessions_image} description="billysroom sessions — afro house, deep, melodic tech and soulful piano mixes, plus live sets on video.">
+<Base tone="tobacco" title="sessions" current="sessions" bg={site.sessions_image} description="billysroom sessions — afro house, deep, melodic tech and soulful piano mixes, plus live sets on video.">
   <Logo page="sessions" sub="sessions" tone="page" />
 
   <div class="tabs" role="tablist" aria-label="sessions">
     <a class="pill small tab" role="tab" href="#mixes" data-tab="mixes">mixes · {audio.length}</a>
     {video.length > 0 && <a class="pill small tab" role="tab" href="#live" data-tab="live">live sets · {video.length}</a>}
-    <a class="pill small tab" role="tab" href="#kolanut" data-tab="kolanut">kolanut fm{episodes.length > 0 && ` · ${episodes.length}`}</a>
+    <a class="pill small tab" role="tab" href="#kolanut" data-tab="kolanut">kolanut.fm{episodes.length > 0 && ` · ${episodes.length}`}</a>
   </div>
 
   <section id="mixes" class="tab-panel" role="tabpanel" aria-label="mixes">
@@ -45,12 +45,12 @@ const episodes = await getKolanut();
     </section>
   )}
 
-  <section id="kolanut" class="tab-panel kolanut" role="tabpanel" aria-label="kolanut fm">
+  <section id="kolanut" class="tab-panel kolanut" role="tabpanel" aria-label="kolanut.fm">
     <div class="k-head">
-      <h2 class="k-title">kolanut fm</h2>
+      <h2 class="k-title">kolanut.fm</h2>
       <p class="k-intro">{site.kolanut_intro}</p>
       {episodes.length === 0 && <p class="k-soon">coming soon</p>}
-      {site.kolanut_instagram && <a class="pill small" href={site.kolanut_instagram} target="_blank" rel="noopener">follow kolanut fm for updates ↗</a>}
+      {site.kolanut_instagram && <a class="pill small" href={site.kolanut_instagram} target="_blank" rel="noopener">follow kolanut.fm for updates ↗</a>}
     </div>
     {episodes.map((e) => (
       <article class="session">
@@ -60,7 +60,7 @@ const episodes = await getKolanut();
           <p>{e.data.guest && <>with {e.data.guest} · </>}{shortDate(e.data.date)}</p>
           {e.data.description && <p>{e.data.description}</p>}
         </div>
-        <Player url={e.data.url} title={`kolanut fm ${e.data.episode}: ${e.data.title}`} />
+        <Player url={e.data.url} title={`kolanut.fm ${e.data.episode}: ${e.data.title}`} />
       </article>
     ))}
   </section>

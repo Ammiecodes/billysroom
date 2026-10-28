@@ -82,9 +82,9 @@ collections:
       - { name: hidden, label: hide from site, widget: boolean, required: false, default: false }
 
   - name: kolanut
-    label: kolanut fm
+    label: kolanut.fm
     label_singular: episode
-    description: kolanut fm episodes. paste the youtube link — they show under the "kolanut fm" tab on /sessions. while there are none, the tab shows "coming soon".
+    description: kolanut.fm episodes. paste the youtube link — they show under the "kolanut.fm" tab on /sessions. while there are none, the tab shows "coming soon".
     folder: src/content/kolanut
     create: true
     slug: 'episode-{{episode}}'
@@ -126,8 +126,8 @@ collections:
           - { name: soundcloud, label: soundcloud link, widget: string }
           - { name: youtube, label: youtube link, widget: string, required: false }
           - { name: x, label: x link, widget: string, required: false }
-          - { name: kolanut_intro, label: kolanut fm intro, widget: text }
-          - { name: kolanut_instagram, label: kolanut fm instagram link, widget: string, required: false }
+          - { name: kolanut_intro, label: kolanut.fm intro, widget: text }
+          - { name: kolanut_instagram, label: kolanut.fm instagram link, widget: string, required: false }
           - { name: kit_form_id, label: kit form id, widget: string, hint: 'the number in your kit form link' }
           - { name: newsletter_url, label: newsletter page, widget: string }
           - { name: press_kit_url, label: notion press kit, widget: string, required: false }
@@ -138,7 +138,8 @@ collections:
           - { name: logo_sessions, label: logo — sessions, widget: image, required: false }
           - { name: logo_exclusive, label: logo — exclusive, widget: image, required: false }
           - { name: logo_press, label: logo — press & booking, widget: image, required: false }
-          - { name: hero_image, label: home page photo, widget: image, required: false }
+          - { name: hero_image, label: home page photo, widget: image, required: false, hint: 'fills the whole home page unless you add a second photo below' }
+          - { name: home_sections_image, label: home page photo — scroll sections, widget: image, required: false, hint: 'optional. a different photo behind latest mix, dates, billy’s room, about and roommates.' }
           - { name: sessions_image, label: sessions page photo, widget: image, required: false }
           - { name: dates_image, label: dates page photo, widget: image, required: false }
           - { name: exclusive_image, label: exclusive page background, widget: image, required: false }

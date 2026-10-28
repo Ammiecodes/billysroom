@@ -63,7 +63,7 @@ export function embedFor(url: string): EmbedInfo {
   const u = url.trim();
   if (/soundcloud\.com\//i.test(u)) {
     const clean = u.split('?')[0];
-    const q = new URLSearchParams({ url: clean, color: '#f4e25a', auto_play: 'false', hide_related: 'true', show_comments: 'false', show_user: 'true', show_reposts: 'false', show_teaser: 'false', visual: 'true' });
+    const q = new URLSearchParams({ url: clean, color: '#feea3b', auto_play: 'false', hide_related: 'true', show_comments: 'false', show_user: 'true', show_reposts: 'false', show_teaser: 'false', visual: 'true' });
     return { kind: 'soundcloud', src: `https://w.soundcloud.com/player/?${q}` };
   }
   const yt = u.match(/(?:youtube\.com\/(?:watch\?(?:.*&)?v=|embed\/|shorts\/|live\/)|youtu\.be\/)([\w-]{11})/i);

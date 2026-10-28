@@ -2,7 +2,8 @@
 import '../styles/global.css';
 import site from '../data/site.json';
 import Icons from '../components/Icons.astro';
-const { title, description = site.tagline, bg = '', theme = '', current = '', image = '' } = Astro.props;
+const { title, description = site.tagline, bg = '', theme = '', tone = 'deep', current = '', image = '' } = Astro.props;
+const toneHex: Record<string, string> = { deep: '#2e1d6c', earth: '#214732', tobacco: '#6d4f45' };
 const fullTitle = title ? `${title} – [billysroom]` : '[billysroom]';
 const nav = [
   { href: '/', label: 'dj', key: 'home' },
@@ -22,7 +23,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
   <title>{fullTitle}</title>
   <meta name="description" content={description} />
   <link rel="canonical" href={canonical} />
-  <meta name="theme-color" content="#000000" />
+  <meta name="theme-color" content={toneHex[tone] || toneHex.deep} />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="[billysroom]" />
   <meta property="og:title" content={fullTitle} />
@@ -33,7 +34,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   <slot name="head" />
 </head>
-<body class={theme}>
+<body class={`${theme} tone-${tone}${bg ? ' has-photo' : ''}`}>
   <div class={`backdrop ${bg ? '' : 'placeholder'}`} style={bg ? `background-image:url(${bg})` : ''} aria-hidden="true"></div>
   <nav class="site-nav" aria-label="Main">
     {nav.map((n) => <a href={n.href} aria-current={current === n.key ? 'page' : undefined}>{n.label}</a>)}
@@ -70,6 +71,13 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
       const first = box.querySelector<HTMLElement>('[data-ends]:not([hidden])');
       box.querySelectorAll<HTMLElement>('[data-ends]').forEach((el) => (el.hidden = el !== first));
       box.hidden = !first;
+    });
+    // "last" shows only the most recent past entry, and only when nothing is coming up
+    document.querySelectorAll<HTMLElement>('[data-last]').forEach((box) => {
+      const first = box.querySelector<HTMLElement>('[data-ends]:not([hidden])');
+      box.querySelectorAll<HTMLElement>('[data-ends]').forEach((el) => (el.hidden = el !== first));
+      const sib = box.previousElementSibling as HTMLElement | null;
+      box.hidden = !first || !!(sib && sib.hasAttribute('data-next') && !sib.hidden);
     });
     // YouTube: load the real player only when tapped (keeps pages fast)
     document.querySelectorAll<HTMLButtonElement>('button[data-yt]').forEach((b) => {

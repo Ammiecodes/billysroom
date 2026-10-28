@@ -4,7 +4,7 @@ import Logo from '../components/Logo.astro';
 import site from '../data/site.json';
 const paras = site.bio_long.split(/\n\s*\n/);
 ---
-<Base title="press & booking" current="press" bg={site.press_image} description={`billysroom press kit and booking — ${site.tagline}`}>
+<Base tone="tobacco" title="press & booking" current="press" bg={site.press_image} description={`billysroom press kit and booking — ${site.tagline}`}>
   <div class="narrow">
     <Logo page="press" sub="press & booking" tone="page" />
 

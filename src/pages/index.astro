@@ -14,7 +14,7 @@ const upcoming = [
   ...drops.map((x) => ({ date: x.data.date, name: `${x.data.title}${x.data.edition ? ' ' + x.data.edition : ''}`, place: x.data.city, time: x.data.doors || timeOf(x.data.date), href: '/exclusive', cta: 'invite', ext: false })),
 ].sort((a, b) => a.date.getTime() - b.date.getTime());
 ---
-<Base current="home" bg={site.hero_image}>
+<Base tone="deep" current="home" bg={site.hero_image}>
   <section class="hero">
     <Logo page="home"><span class="sr"> — {site.tagline}</span></Logo>
 
@@ -35,7 +35,7 @@ const upcoming = [
     <a class="scroll-cue" href="#more" aria-label="scroll for more">↓</a>
   </section>
 
-  <div class="below" id="more">
+  <div class="below" id="more" style={site.home_sections_image ? `background-image:url(${site.home_sections_image})` : undefined}>
     {latest && (
       <section class="home-sec">
         <h2 class="kicker">latest mix</h2>
@@ -63,8 +63,23 @@ const upcoming = [
 
     <section class="home-sec">
       <h2 class="kicker">billy’s room</h2>
-      <p class="lead">intimate afro house nights in lagos, with friends on the decks. invites go to roommates first.</p>
-      <p class="more"><a href="/exclusive">past editions & next drop →</a></p>
+      <div data-next>
+        {[...drops].sort((a, b) => a.data.date.getTime() - b.data.date.getTime()).map((x) => (
+          <a class="br-card" href="/exclusive" data-ends={endsAt(x.data.date)} data-when="upcoming">
+            {x.data.flyer && <img src={x.data.flyer} alt="" loading="lazy" />}
+            <span><b>next: {x.data.title}{x.data.edition ? ' ' + x.data.edition : ''}</b>{longDate(x.data.date)} · {x.data.city}<em>get an invite →</em></span>
+          </a>
+        ))}
+      </div>
+      <div data-last>
+        {drops.map((x) => (
+          <a class="br-card" href="/exclusive" data-ends={endsAt(x.data.date)} data-when="past">
+            {x.data.flyer && <img src={x.data.flyer} alt="" loading="lazy" />}
+            <span><b>last: {x.data.title}{x.data.edition ? ' ' + x.data.edition : ''}</b>{longDate(x.data.date)} · {x.data.city}{x.data.lineup.length > 0 && <small>{x.data.lineup.join(' · ')}</small>}<em>all past editions →</em></span>
+          </a>
+        ))}
+      </div>
+      <p class="lead" style="margin-top:14px">intimate afro house nights, with friends on the decks. invites go to roommates first.</p>
     </section>
 
     <section class="home-sec">

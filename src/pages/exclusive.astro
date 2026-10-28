@@ -9,7 +9,7 @@ const upcoming = [...drops].sort((a, b) => a.data.date.getTime() - b.data.date.g
 const dayMonth = (d: Date) => `${monthName(d)} ${new Intl.DateTimeFormat('en-GB', { timeZone: 'Africa/Lagos', day: 'numeric' }).format(d)}`;
 const name = (x: any) => `${x.data.title}${x.data.edition ? ' ' + x.data.edition : ''}`;
 ---
-<Base title="billy’s room exclusive" current="exclusive" bg={site.exclusive_image} theme="exclusive-theme" description="billy’s room — intimate afro house parties in lagos. join the roommates for first access to invites.">
+<Base tone="earth" title="billy’s room exclusive" current="exclusive" bg={site.exclusive_image} theme="exclusive-theme" description="billy’s room — intimate afro house parties in lagos. join the roommates for first access to invites.">
   <Logo page="exclusive" sub="exclusive" />
 
   <div class="ex-flow" data-drop-flow>
