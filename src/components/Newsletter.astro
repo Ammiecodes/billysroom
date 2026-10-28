@@ -1,9 +1,39 @@
 ---
+// Sign-ups go straight into the Kit form, so Kit tags, sequences and automations fire as before.
 import site from '../data/site.json';
-const { cta = 'join the roommates', id = 'nl' } = Astro.props;
+const { cta = 'join the roommates', id = 'nl', note = '' } = Astro.props;
 ---
-<form class="signup" action={`https://app.kit.com/forms/${site.kit_form_id}/subscriptions`} method="post" target="_blank">
+<form class="signup" data-kit action={`https://app.kit.com/forms/${site.kit_form_id}/subscriptions`} method="post" target="_blank">
   <label class="sr" for={id}>email address</label>
   <input id={id} type="email" name="email_address" placeholder="💌 email address" required autocomplete="email" />
   <button class="pill solid" type="submit">{cta}</button>
+  <p class="signup-msg meta" role="status" aria-live="polite" hidden></p>
+  {note && <p class="meta" style="text-align:center;margin:0">{note}</p>}
 </form>
+<script>
+  document.querySelectorAll<HTMLFormElement>('form[data-kit]').forEach((form) => {
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = form.querySelector('button')!;
+      const msg = form.querySelector<HTMLElement>('.signup-msg')!;
+      const label = btn.textContent;
+      btn.disabled = true; btn.textContent = 'joining…';
+      try {
+        const r = await fetch(form.action, { method: 'POST', body: new FormData(form), headers: { Accept: 'application/json' } });
+        const data = await r.json();
+        if (data.status === 'success') {
+          form.querySelector('input')!.hidden = true; btn.hidden = true;
+          msg.textContent = 'you’re in ✦ check your inbox.';
+          msg.hidden = false;
+          return;
+        }
+        if (data.url) { window.open(data.url, '_blank'); msg.textContent = 'one quick check opened in a new tab — finish there and you’re in.'; msg.hidden = false; }
+        else throw new Error('unexpected');
+      } catch {
+        form.submit(); // fall back to Kit's own page
+      } finally {
+        btn.disabled = false; btn.textContent = label;
+      }
+    });
+  });
+</script>

@@ -34,6 +34,7 @@ const drops = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/drops' }),
   schema: z.object({
     title: z.string(),
+    edition: z.string().optional().default(''),
     date: z.coerce.date(),
     city: z.string().optional().default(''),
     venue: z.string().optional().default(''),

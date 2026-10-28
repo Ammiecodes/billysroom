@@ -1,31 +1,81 @@
 ---
 import Base from '../layouts/Base.astro';
+import Player from '../components/Player.astro';
+import Newsletter from '../components/Newsletter.astro';
 import site from '../data/site.json';
-import { getGigs, getDrops, endsAt, longDate } from '../lib/util';
+import { getGigs, getDrops, getMixes, embedFor, endsAt, longDate, shortDate, timeOf } from '../lib/util';
 const gigs = await getGigs();
 const drops = await getDrops();
+const mixes = await getMixes();
+const latest = mixes.find((m) => embedFor(m.data.url).kind !== 'youtube');
 const upcoming = [
-  ...gigs.map((g) => ({ date: g.data.date, label: `${g.data.venue} | ${g.data.city}`, href: '/dates' })),
-  ...drops.map((x) => ({ date: x.data.date, label: `${x.data.title}${x.data.city ? ' | ' + x.data.city : ''}`, href: '/exclusive' })),
+  ...gigs.map((g) => ({ date: g.data.date, name: g.data.venue, place: `${g.data.city} ${g.data.country}`, time: g.data.time_label || timeOf(g.data.date), href: g.data.ticket_url || '/dates', cta: g.data.ticket_url ? 'tickets' : 'details', ext: !!g.data.ticket_url })),
+  ...drops.map((x) => ({ date: x.data.date, name: `${x.data.title}${x.data.edition ? ' ' + x.data.edition : ''}`, place: x.data.city, time: x.data.doors || timeOf(x.data.date), href: '/exclusive', cta: 'invite', ext: false })),
 ].sort((a, b) => a.date.getTime() - b.date.getTime());
 ---
 <Base current="home" bg={site.hero_image}>
-  <h1 class="logo">billy’s<br />room<span class="sr"> — {site.tagline}</span></h1>
+  <section class="hero">
+    <h1 class="logo">billy’s<br />room<span class="sr"> — {site.tagline}</span></h1>
 
-  <div data-next>
-    {upcoming.map((u) => (
-      <a class="next-up" href={u.href} data-ends={endsAt(u.date)} data-when="upcoming">
-        <b>next up ✦</b>{u.label} · {longDate(u.date)}
-      </a>
-    ))}
-  </div>
+    <div data-next>
+      {upcoming.map((u) => (
+        <a class="next-up" href={u.href} data-ends={endsAt(u.date)} data-when="upcoming">
+          <b>next up ✦</b>{u.name} | {u.place} · {longDate(u.date)}
+        </a>
+      ))}
+    </div>
 
-  <div class="pills">
-    <a class="pill" href="/exclusive">billy’s room exclusive 🇳🇬</a>
-    <a class="pill" href="/sessions">room sessions / mixes</a>
-    <a class="pill" href="/dates">schedule / dates</a>
-    <a class="pill" href="/press#book">book me</a>
-    <a class="pill" href={`mailto:${site.demo_email}?subject=demo%20for%20billysroom`}>send demos / tracks</a>
-    <a class="pill solid" href="/exclusive#roommates">join the roommates 💌</a>
+    <div class="pills">
+      <a class="pill" href="/sessions">listen to sessions</a>
+      <a class="pill" href="/dates">where to catch me</a>
+      <a class="pill solid" href="/press#book">book me</a>
+    </div>
+
+    <a class="scroll-cue" href="#more" aria-label="scroll for more">↓</a>
+  </section>
+
+  <div class="below" id="more">
+    {latest && (
+      <section class="home-sec">
+        <h2 class="kicker">latest mix</h2>
+        <h3 class="h3">{latest.data.title}</h3>
+        {latest.data.description && <p class="meta" style="margin-bottom:12px">{latest.data.description}</p>}
+        <Player url={latest.data.url} title={latest.data.title} />
+        <p class="more"><a href="/sessions">all sessions →</a> <a href="/sessions#live">live sets →</a></p>
+      </section>
+    )}
+
+    <section class="home-sec">
+      <h2 class="kicker">where to catch me</h2>
+      <ul class="clean agenda" data-list="home-up">
+        {upcoming.map((u) => (
+          <li data-ends={endsAt(u.date)} data-when="upcoming">
+            <span class="ag-date">{shortDate(u.date)}</span>
+            <span class="ag-what">{u.name}<small>{u.place} · {u.time}</small></span>
+            <a class="pill small" href={u.href} target={u.ext ? '_blank' : undefined} rel="noopener">{u.cta}</a>
+          </li>
+        ))}
+      </ul>
+      <p class="meta" data-empty="home-up" hidden>no public dates right now — roommates hear about new ones first.</p>
+      <p class="more"><a href="/dates">all dates →</a></p>
+    </section>
+
+    <section class="home-sec">
+      <h2 class="kicker">billy’s room</h2>
+      <p class="lead">intimate afro house nights in lagos, with friends on the decks. invites go to roommates first.</p>
+      <p class="more"><a href="/exclusive">past editions & next drop →</a></p>
+    </section>
+
+    <section class="home-sec">
+      <h2 class="kicker">about</h2>
+      <p class="lead">{site.bio_short}</p>
+      <p class="more"><a href="/press">press kit & booking →</a> <a href={`mailto:${site.demo_email}?subject=demo%20for%20billysroom`}>send demos / tracks →</a></p>
+    </section>
+
+    <section class="home-sec" id="roommates">
+      <h2 class="kicker">join the roommates</h2>
+      <p class="lead">first access to my exclusive parties, tickets to featured events and inside gist.</p>
+      <Newsletter id="nl-home" cta="join the roommates 💌" />
+    </section>
   </div>
 </Base>

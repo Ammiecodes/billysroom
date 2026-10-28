@@ -2,7 +2,6 @@
 import Base from '../layouts/Base.astro';
 import site from '../data/site.json';
 const paras = site.bio_long.split(/\n\s*\n/);
-const wa = site.whatsapp ? `https://wa.me/${site.whatsapp.replace(/\D/g, '')}` : '';
 ---
 <Base title="press & booking" current="press" bg={site.press_image} description={`billysroom press kit and booking — ${site.tagline}`}>
   <div class="narrow">
@@ -18,7 +17,14 @@ const wa = site.whatsapp ? `https://wa.me/${site.whatsapp.replace(/\D/g, '')}` :
     {site.played_at.length > 0 && (
       <>
         <h2 class="h2">played</h2>
-        <div class="chips">{site.played_at.map((g) => <span class="chip">{g}</span>)}</div>
+        <div class="played">
+          {site.played_at.map((c) => (
+            <div class="played-row">
+              <span class="flag" role="img" aria-label={c.name}>{c.country}</span>
+              <div class="chips" style="justify-content:flex-start">{c.venues.map((v) => <span class="chip">{v}</span>)}</div>
+            </div>
+          ))}
+        </div>
       </>
     )}
 
@@ -51,7 +57,6 @@ const wa = site.whatsapp ? `https://wa.me/${site.whatsapp.replace(/\D/g, '')}` :
       </form>
       <p class="meta" style="text-align:center;margin-top:18px">
         bookings: <a href={`mailto:${site.booking_email}`}>{site.booking_email}</a>
-        {wa && <> · <a href={wa} target="_blank" rel="noopener">whatsapp</a></>}
         <br />demos / tracks: <a href={`mailto:${site.demo_email}`}>{site.demo_email}</a>
       </p>
     </section>

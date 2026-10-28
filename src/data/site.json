@@ -24,17 +24,28 @@
   "hero_image": "",
   "press_photos": [],
   "x": "https://x.com/amakamonee",
-  "whatsapp": "+2348140090565",
   "press_photos_url": "https://drive.google.com/drive/folders/1djEKfq7qtklrJwGjv_6X7PUrkA6Ui4ie?usp=drive_link",
   "played_at": [
-    "group therapy",
-    "house arrest",
-    "the group collective",
-    "monochroma",
-    "sonic radio",
-    "soho (nairobi)",
-    "bar next door (nairobi)",
-    "ciel"
+    {
+      "country": "🇳🇬",
+      "name": "nigeria",
+      "venues": [
+        "group therapy",
+        "house arrest",
+        "the group collective",
+        "monochroma",
+        "sonic radio"
+      ]
+    },
+    {
+      "country": "🇰🇪",
+      "name": "kenya",
+      "venues": [
+        "soho",
+        "bar next door",
+        "ciel lounge"
+      ]
+    }
   ],
   "sessions_image": "",
   "dates_image": "",

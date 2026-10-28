@@ -47,10 +47,11 @@ collections:
     folder: src/content/drops
     create: true
     slug: '{{year}}-{{month}}-{{day}}-{{title}}'
-    summary: '{{title}} · {{date}}'
+    summary: '{{title}} {{edition}} · {{date}}'
     sortable_fields: [date, title]
     fields:
       - { name: title, label: party name, widget: string, default: 'billy’s room exclusive' }
+      - { name: edition, label: edition, widget: string, required: false, hint: 'e.g. viii — shows on past editions' }
       - { name: date, label: date & doors time, widget: datetime, input_timezone: Africa/Lagos }
       - { name: city, label: city, widget: string, required: false, default: lagos }
       - { name: venue, label: venue, widget: string, required: false, hint: 'e.g. private loft, secret location' }
@@ -92,10 +93,15 @@ collections:
           - { name: bio_short, label: short bio, widget: text }
           - { name: bio_long, label: full bio (press page), widget: text }
           - { name: genres, label: genres, widget: list }
-          - { name: played_at, label: played at, widget: list }
+          - name: played_at
+            label: played at (by country)
+            widget: list
+            fields:
+              - { name: country, label: flag, widget: string, hint: 'e.g. 🇳🇬' }
+              - { name: name, label: country name, widget: string }
+              - { name: venues, label: venues / events, widget: list }
           - { name: booking_email, label: booking email, widget: string }
           - { name: demo_email, label: demos email, widget: string }
-          - { name: whatsapp, label: whatsapp number, widget: string, required: false }
           - { name: instagram, label: instagram link, widget: string }
           - { name: soundcloud, label: soundcloud link, widget: string }
           - { name: youtube, label: youtube link, widget: string, required: false }

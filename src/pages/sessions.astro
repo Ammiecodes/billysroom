@@ -10,8 +10,12 @@ const video = all.filter((m) => embedFor(m.data.url).kind === 'youtube');
 <Base title="sessions" current="sessions" bg={site.sessions_image} description="billysroom sessions — afro house, deep, melodic tech and soulful piano mixes, plus live sets on video.">
   <h1 class="logo page">billy’s<br />room<small>sessions</small></h1>
 
-  <section aria-labelledby="mixes">
-    <h2 class="h2" id="mixes">mixes</h2>
+  <div class="tabs" role="tablist" aria-label="sessions">
+    <a class="pill small tab" role="tab" href="#mixes" data-tab="mixes">mixes · {audio.length}</a>
+    {video.length > 0 && <a class="pill small tab" role="tab" href="#live" data-tab="live">live sets · {video.length}</a>}
+  </div>
+
+  <section id="mixes" class="tab-panel" role="tabpanel" aria-label="mixes">
     {audio.map((m) => (
       <article class="session">
         <div>
@@ -25,8 +29,7 @@ const video = all.filter((m) => embedFor(m.data.url).kind === 'youtube');
   </section>
 
   {video.length > 0 && (
-    <section aria-labelledby="videos">
-      <h2 class="h2" id="videos">live sets</h2>
+    <section id="live" class="tab-panel" role="tabpanel" aria-label="live sets">
       {video.map((m) => (
         <article class="session">
           <div>
@@ -40,4 +43,15 @@ const video = all.filter((m) => embedFor(m.data.url).kind === 'youtube');
   )}
 
   <p style="text-align:center;margin-top:28px"><a class="pill small" href={site.soundcloud} target="_blank" rel="noopener">more on soundcloud ↗</a></p>
+  <script>
+    const tabs = [...document.querySelectorAll<HTMLAnchorElement>('[data-tab]')];
+    const show = (id: string) => {
+      if (!tabs.some((t) => t.dataset.tab === id)) id = 'mixes';
+      tabs.forEach((t) => { const on = t.dataset.tab === id; t.setAttribute('aria-selected', String(on)); t.classList.toggle('on', on); });
+      document.querySelectorAll<HTMLElement>('.tab-panel').forEach((p) => (p.hidden = p.id !== id));
+    };
+    tabs.forEach((t) => t.addEventListener('click', (e) => { e.preventDefault(); history.replaceState(null, '', '#' + t.dataset.tab); show(t.dataset.tab!); }));
+    show(location.hash.slice(1));
+    if (location.hash) requestAnimationFrame(() => window.scrollTo(0, 0));
+  </script>
 </Base>

@@ -59,6 +59,12 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
       if (empty) empty.hidden = visible > 0;
       if (list.dataset.hideWhenEmpty !== undefined) list.closest<HTMLElement>('[data-section]')!.hidden = visible === 0;
     });
+    // exclusive page: lead with the upcoming party, or with past editions when nothing is coming
+    document.querySelectorAll<HTMLElement>('[data-drop-flow]').forEach((flow) => {
+      const has = !!flow.querySelector('[data-list="drops"] [data-ends]:not([hidden])');
+      flow.dataset.drop = has ? 'yes' : 'no';
+      flow.querySelectorAll<HTMLElement>('[data-if-drop]').forEach((el) => (el.hidden = el.dataset.ifDrop !== flow.dataset.drop));
+    });
     // "next up" picks the first upcoming entry
     document.querySelectorAll<HTMLElement>('[data-next]').forEach((box) => {
       const first = box.querySelector<HTMLElement>('[data-ends]:not([hidden])');

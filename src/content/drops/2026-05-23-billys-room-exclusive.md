@@ -1,5 +1,6 @@
 ---
 title: "billy’s room exclusive"
+edition: ""
 date: 2026-05-23T21:00:00+01:00
 city: "lagos"
 venue: "private loft"
