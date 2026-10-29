@@ -30,37 +30,46 @@ const pageUrl = new URL(`/music/${release.id}`, Astro.site).toString();
       <p class="rel-artists">{r.artists}{r.featured.length > 0 && <> <span>ft.</span> {r.featured.join(', ')}</>}</p>
       {r.description && <p class="rel-desc">{r.description}</p>}
 
-      <!-- before release day -->
+      <!-- order: reminders (secondary) → main link + dj pack (primary) → individual platforms -->
+      <!-- 1. before release day: reminders -->
       <div class="phase" data-phase="pre" hidden>
         <p class="countdown" data-countdown></p>
-        {r.presave_url && <a class="pill solid" href={r.presave_url} target="_blank" rel="noopener">pre-save {r.title}</a>}
-        {presave.length > 0 && (
-          <div class="dsp-grid presave">
-            {presave.map((p) => <a class="pill small" href={p.href} target="_blank" rel="noopener">pre-save on {p.label} ↗</a>)}
-          </div>
-        )}
         <div class="remind">
-          <button class="pill" type="button" data-ics>add release day to calendar</button>
-          <p class="meta">or get it in your inbox on release day:</p>
+          <p class="meta">get it in your inbox on release day:</p>
           <Newsletter id={`nl-${release.id}`} cta="remind me 💌" formId={(site as any).kit_release_form_id} />
+          <button class="pill" type="button" data-ics>add release day to calendar</button>
         </div>
+        {r.presave_url && <a class="pill solid" href={r.presave_url} target="_blank" rel="noopener">pre-save {r.title}</a>}
       </div>
 
-      <!-- release day onwards -->
-      <div class="phase" data-phase="out" hidden>
-        {stream.length > 0
-          ? <div class="dsp-grid">{stream.map((p) => <a class="pill solid" href={p.href} target="_blank" rel="noopener">{p.label} ↗</a>)}</div>
-          : r.presave_url
-            ? <a class="pill solid" style="width:100%" href={r.presave_url} target="_blank" rel="noopener">listen to {r.title} ↗</a>
-            : <p class="meta">streaming links coming shortly.</p>}
-      </div>
+      <!-- 1. release day onwards: the main listen link -->
+      {r.presave_url && (
+        <div class="phase" data-phase="out" hidden>
+          <a class="pill solid" href={r.presave_url} target="_blank" rel="noopener">listen to {r.title} ↗</a>
+        </div>
+      )}
 
+      <!-- 2. dj pack (any time) -->
       {r.dj_pack_url && (
         <div class="djpack">
           <a class="pill solid" href={r.dj_pack_url} target="_blank" rel="noopener">{r.dj_pack_label} ↓</a>
           {r.dj_pack_note && <p class="meta">{r.dj_pack_note}</p>}
         </div>
       )}
+
+      <!-- 3. individual platforms, after the dj pack -->
+      {presave.length > 0 && (
+        <div class="phase" data-phase="pre" hidden>
+          <div class="dsp-grid presave">
+            {presave.map((p) => <a class="pill small" href={p.href} target="_blank" rel="noopener">pre-save on {p.label} ↗</a>)}
+          </div>
+        </div>
+      )}
+      <div class="phase" data-phase="out" hidden>
+        {stream.length > 0
+          ? <div class="dsp-grid">{stream.map((p) => <a class="pill solid" href={p.href} target="_blank" rel="noopener">{p.label} ↗</a>)}</div>
+          : !r.presave_url && <p class="meta">streaming links coming shortly.</p>}
+      </div>
 
       <button class="share" type="button" data-share>share ↗</button>
     </div>

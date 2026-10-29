@@ -351,6 +351,9 @@ button.pill.solid { color: var(--deep); }
 .remind .pill { width: 100%; }
 .remind .signup { width: 100%; }
 .djpack { display: grid; gap: 6px; width: min(420px, 100%); margin-top: 6px; }
+.djpack .meta { text-align: center; }
+.phase > .pill.solid, .phase > .pill { width: 100%; }
+.remind .meta { text-align: center; margin: 0; }
 .djpack .pill { width: 100%; }
 .share { background: none; border: 0; color: var(--space); font: 13px var(--f-mono); cursor: pointer; padding: 8px; text-decoration: underline; text-underline-offset: 4px; }
 .share:hover { color: var(--lagos); }
