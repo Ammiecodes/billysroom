@@ -5,7 +5,7 @@ release_date: 2026-10-30T00:00:00+01:00
 cover: /images/uploads/decover.webp
 bg_color: boiler
 bg_image: /images/uploads/bgg-2.webp
-title_color: tobacco
+title_color: boiler
 description: |-
   dark energy is a heavy-hitting electronic house track built for the rave floor and released just in time for halloween spooky hours.
 
