@@ -50,7 +50,9 @@ const pageUrl = new URL(`/music/${release.id}`, Astro.site).toString();
       <div class="phase" data-phase="out" hidden>
         {stream.length > 0
           ? <div class="dsp-grid">{stream.map((p) => <a class="pill solid" href={p.href} target="_blank" rel="noopener">{p.label} ↗</a>)}</div>
-          : <p class="meta">streaming links coming shortly.</p>}
+          : r.presave_url
+            ? <a class="pill solid" style="width:100%" href={r.presave_url} target="_blank" rel="noopener">listen to {r.title} ↗</a>
+            : <p class="meta">streaming links coming shortly.</p>}
       </div>
 
       {r.dj_pack_url && (
@@ -84,23 +86,29 @@ const pageUrl = new URL(`/music/${release.id}`, Astro.site).toString();
     const page = document.querySelector<HTMLElement>('[data-release-page]');
     if (page) {
       const at = Number(page.dataset.at);
-      const now = Date.now();
-      const out = now >= at;
-      page.querySelectorAll<HTMLElement>('[data-phase]').forEach((el) => (el.hidden = el.dataset.phase !== (out ? 'out' : 'pre')));
-      const cd = page.querySelector<HTMLElement>('[data-countdown]');
-      if (cd && !out) {
-        const days = Math.ceil((at - now) / 86400000);
-        cd.textContent = days <= 1 ? 'out tomorrow' : `out in ${days} days`;
-      }
+      // calendar date (YYYYMMDD) of a moment, in Lagos time
+      const lagosYmd = (t: number) => new Intl.DateTimeFormat('en-CA', { timeZone: 'Africa/Lagos', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date(t)).replace(/-/g, '');
+      const dayNum = (t: number) => { const y = lagosYmd(t); return Date.UTC(+y.slice(0, 4), +y.slice(4, 6) - 1, +y.slice(6, 8)) / 86400000; };
+      // pre-save ↔ out now, plus the countdown, re-checked by the site's time engine
+      const update = (now: number) => {
+        const out = now >= at;
+        page.querySelectorAll<HTMLElement>('[data-phase]').forEach((el) => (el.hidden = el.dataset.phase !== (out ? 'out' : 'pre')));
+        const cd = page.querySelector<HTMLElement>('[data-countdown]');
+        if (cd && !out) {
+          const days = dayNum(at) - dayNum(now);
+          cd.textContent = days <= 0 ? 'out today' : days === 1 ? 'out tomorrow' : `out in ${days} days`;
+        }
+      };
+      document.addEventListener('br:time', (e) => update((e as CustomEvent<number>).detail));
+      update(window.__brNow ?? Date.now());
       // calendar reminder (.ics) — works with apple, google and outlook calendars
       page.querySelector('[data-ics]')?.addEventListener('click', () => {
-        const d = new Date(at);
-        const ymd = (x: Date) => x.toISOString().slice(0, 10).replace(/-/g, '');
-        const next = new Date(at + 86400000);
+        const start = lagosYmd(at);
+        const end = new Date((dayNum(at) + 1) * 86400000).toISOString().slice(0, 10).replace(/-/g, '');
         const ics = [
           'BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//billysroom//release//EN', 'BEGIN:VEVENT',
-          `UID:${at}-${page.dataset.title}@billysroom.today`, `DTSTAMP:${ymd(new Date())}T000000Z`,
-          `DTSTART;VALUE=DATE:${ymd(d)}`, `DTEND;VALUE=DATE:${ymd(next)}`,
+          `UID:${at}-${(page.dataset.title || '').replace(/\s+/g, '-')}@billysroom.today`, `DTSTAMP:${new Date().toISOString().replace(/[-:]/g, '').slice(0, 15)}Z`,
+          `DTSTART;VALUE=DATE:${start}`, `DTEND;VALUE=DATE:${end}`,
           `SUMMARY:${page.dataset.title} — ${page.dataset.artists} is out`, `URL:${page.dataset.url}`,
           `DESCRIPTION:listen: ${page.dataset.url}`, 'END:VEVENT', 'END:VCALENDAR',
         ].join('\r\n');

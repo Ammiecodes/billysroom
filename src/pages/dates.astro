@@ -21,7 +21,7 @@ const years = [...new Set(history.map((h) => yearOf(h.date)))];
         .sort((a, b) => a.d.getTime() - b.d.getTime())
         .map((i) => i.t === 'gig' ? <GigCard gig={i.g} when="upcoming" /> : (
           <article class="gig" data-ends={endsAt(i.x.data.date)} data-when="upcoming">
-            <h3 class="h3">{i.x.data.title} | {i.x.data.city} 🔑</h3>
+            <h3 class="h3">{i.x.data.title}{i.x.data.edition ? ` ${i.x.data.edition}` : ''} | {i.x.data.city} 🔑</h3>
             <p class="meta">{longDate(i.x.data.date)}{i.x.data.doors && ` | doors ${i.x.data.doors}`}</p>
             <p class="meta" style="margin:0">invite only</p>
             <a class="pill small" href="/exclusive">get an invite 🎟️</a>
@@ -48,24 +48,28 @@ const years = [...new Set(history.map((h) => yearOf(h.date)))];
     </section>
   </div>
   <script>
-    // Year filter: shows the most recent year by default; years with no past dates yet are hidden.
-    // runs after the layout script has sorted upcoming vs past
-    document.addEventListener('DOMContentLoaded', () => {
+    // Year filter: opens on the most recent year that has past dates; years with none are hidden.
+    // Re-checked whenever the site's time engine runs, so a gig that just finished joins the list.
     const box = document.querySelector<HTMLElement>('[data-years]');
-    const items = [...document.querySelectorAll<HTMLElement>('ul.past li[data-year]')];
     if (box) {
-      const past = items.filter((li) => !li.hidden);
       const btns = [...box.querySelectorAll<HTMLButtonElement>('button')];
-      const live = new Set(past.map((li) => li.dataset.year));
-      btns.forEach((b) => { if (b.dataset.year !== 'all' && !live.has(b.dataset.year)) b.hidden = true; });
+      let chosen = '';
       const pick = (y: string) => {
+        chosen = y;
         btns.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.year === y)));
-        past.forEach((li) => li.classList.toggle('yr-off', y !== 'all' && li.dataset.year !== y));
+        document.querySelectorAll<HTMLElement>('ul.past li[data-year]').forEach((li) => li.classList.toggle('yr-off', y !== 'all' && li.dataset.year !== y));
+      };
+      const refresh = () => {
+        const past = [...document.querySelectorAll<HTMLElement>('ul.past li[data-year]')].filter((li) => !li.hidden);
+        const live = new Set(past.map((li) => li.dataset.year));
+        btns.forEach((b) => (b.hidden = b.dataset.year !== 'all' && !live.has(b.dataset.year)));
+        box.hidden = live.size < 2;
+        const valid = chosen === 'all' || live.has(chosen);
+        pick(live.size < 2 ? 'all' : valid && chosen ? chosen : btns.find((b) => !b.hidden)!.dataset.year!);
       };
       btns.forEach((b) => b.addEventListener('click', () => pick(b.dataset.year!)));
-      if (live.size < 2) box.hidden = true;
-      pick(live.size < 2 ? 'all' : btns.find((b) => !b.hidden)!.dataset.year!);
+      document.addEventListener('br:time', refresh);
+      if (window.__brNow) refresh();
     }
-    });
   </script>
 </Base>

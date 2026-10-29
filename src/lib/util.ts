@@ -1,10 +1,16 @@
 import { getCollection } from 'astro:content';
 
 const TZ = 'Africa/Lagos';
-// a gig counts as "past" this many hours after its start time
-export const PAST_AFTER_HOURS = 10;
-
-export const endsAt = (d: Date) => d.getTime() + PAST_AFTER_HOURS * 3600_000;
+// A gig/party stays "upcoming" until 6am Lagos time the morning after its date
+// (and never less than 8 hours after it starts). So a 10pm set flips at 6am,
+// and an entry saved with no time (midnight) still shows all of that day and night.
+const HOUR = 3600_000, DAY = 24 * HOUR, LAGOS_OFFSET = 1 * HOUR; // Lagos is UTC+1 all year
+export const endsAt = (d: Date) => {
+  const t = d.getTime();
+  const lagosMidnight = Math.floor((t + LAGOS_OFFSET) / DAY) * DAY - LAGOS_OFFSET; // start of that Lagos day
+  const nextMorning = lagosMidnight + DAY + 6 * HOUR;
+  return Math.max(nextMorning, t + 8 * HOUR);
+};
 
 function ordinal(n: number) {
   const s = ['th', 'st', 'nd', 'rd'], v = n % 100;

@@ -18,6 +18,7 @@ const name = (x: any) => `${x.data.title}${x.data.edition ? ' ' + x.data.edition
       {upcoming.map((x) => (
         <section class="flyer-card" data-ends={endsAt(x.data.date)} data-when="upcoming">
           {x.data.flyer && <img class="flyer-img" src={x.data.flyer} alt={`flyer for ${name(x)}, ${longDate(x.data.date)}`} />}
+          {x.data.edition && <p class="line" style="margin:0 0 6px">{name(x)}</p>}
           <p class="date">{dayMonth(x.data.date)}</p>
           {x.data.venue && <p class="line">venue: {x.data.venue}</p>}
           {x.data.doors && <p class="line">doors open: {x.data.doors}</p>}

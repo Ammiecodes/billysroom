@@ -32,6 +32,8 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
   {ogImage && <meta property="og:image" content={new URL(ogImage, Astro.site)} />}
   <meta name="twitter:card" content="summary_large_image" />
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
   <slot name="head" />
 </head>
 <body class={`${theme} tone-${tone}${bg ? ' has-photo' : ''}`}>
@@ -44,47 +46,59 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
   </main>
   <Icons />
   <script>
-    // Date-driven content: anything with data-ends flips from "upcoming" to "past"
-    // in the visitor's browser, so the site never shows a stale gig, even between deploys.
-    const now = Date.now();
-    document.querySelectorAll<HTMLElement>('[data-ends]').forEach((el) => {
-      const past = Number(el.dataset.ends) <= now;
-      const want = el.dataset.when; // "upcoming" | "past"
-      el.hidden = want === 'upcoming' ? past : !past;
-    });
-    document.querySelectorAll<HTMLElement>('[data-new-until]').forEach((el) => (el.hidden = Number(el.dataset.newUntil) <= now));
-    // Empty-state messages for lists that ended up with nothing visible
-    document.querySelectorAll<HTMLElement>('[data-list]').forEach((list) => {
-      const visible = list.querySelectorAll('[data-ends]:not([hidden])').length;
-      const empty = document.querySelector<HTMLElement>(`[data-empty="${list.dataset.list}"]`);
-      if (empty) empty.hidden = visible > 0;
-      if (list.dataset.hideWhenEmpty !== undefined) list.closest<HTMLElement>('[data-section]')!.hidden = visible === 0;
-    });
-    // exclusive page: lead with the upcoming party, or with past editions when nothing is coming
-    document.querySelectorAll<HTMLElement>('[data-drop-flow]').forEach((flow) => {
-      const has = !!flow.querySelector('[data-list="drops"] [data-ends]:not([hidden])');
-      flow.dataset.drop = has ? 'yes' : 'no';
-      flow.querySelectorAll<HTMLElement>('[data-if-drop]').forEach((el) => (el.hidden = el.dataset.ifDrop !== flow.dataset.drop));
-    });
-    // "next up" picks the first upcoming entry
-    document.querySelectorAll<HTMLElement>('[data-next]').forEach((box) => {
-      const first = box.querySelector<HTMLElement>('[data-ends]:not([hidden])');
-      box.querySelectorAll<HTMLElement>('[data-ends]').forEach((el) => (el.hidden = el !== first));
-      box.hidden = !first;
-    });
-    // "last" shows only the most recent past entry, and only when nothing is coming up
-    document.querySelectorAll<HTMLElement>('[data-last]').forEach((box) => {
-      const first = box.querySelector<HTMLElement>('[data-ends]:not([hidden])');
-      box.querySelectorAll<HTMLElement>('[data-ends]').forEach((el) => (el.hidden = el !== first));
-      const sib = box.previousElementSibling as HTMLElement | null;
-      box.hidden = !first || !!(sib && sib.hasAttribute('data-next') && !sib.hidden);
-    });
-    // release badges: "out 12.11.26" before, "out now" for 60 days after, then the date
-    document.querySelectorAll<HTMLElement>('[data-release-at]').forEach((el) => {
-      const at = Number(el.dataset.releaseAt);
-      if (now < at) el.textContent = el.dataset.pre || el.textContent;
-      else if (now < at + 60 * 86400000) el.textContent = el.dataset.out || el.textContent;
-    });
+    // ─── Time engine ────────────────────────────────────────────────────────────
+    // Everything date-driven (upcoming → past, next/last cards, "new" tags, release
+    // badges) is decided here in the visitor's browser, so the site is always current
+    // without anyone redeploying. It runs on load, every 30s, and when the tab is
+    // reopened, then announces "br:time" so page-specific scripts can update too.
+    declare global { interface Window { __brNow?: number } }
+    const apply = (now: number) => {
+      document.querySelectorAll<HTMLElement>('[data-ends]').forEach((el) => {
+        const past = Number(el.dataset.ends) <= now;
+        el.hidden = el.dataset.when === 'upcoming' ? past : !past;
+      });
+      document.querySelectorAll<HTMLElement>('[data-new-until]').forEach((el) => (el.hidden = Number(el.dataset.newUntil) <= now));
+      // empty-state messages / sections for lists that ended up with nothing visible
+      document.querySelectorAll<HTMLElement>('[data-list]').forEach((list) => {
+        const visible = list.querySelectorAll('[data-ends]:not([hidden])').length;
+        const empty = document.querySelector<HTMLElement>(`[data-empty="${list.dataset.list}"]`);
+        if (empty) empty.hidden = visible > 0;
+        if (list.dataset.hideWhenEmpty !== undefined) {
+          const sec = list.closest<HTMLElement>('[data-section]');
+          if (sec) sec.hidden = visible === 0;
+        }
+      });
+      // exclusive page: lead with the upcoming party, or with past editions when nothing is coming
+      document.querySelectorAll<HTMLElement>('[data-drop-flow]').forEach((flow) => {
+        const has = !!flow.querySelector('[data-list="drops"] [data-ends]:not([hidden])');
+        flow.dataset.drop = has ? 'yes' : 'no';
+        flow.querySelectorAll<HTMLElement>('[data-if-drop]').forEach((el) => (el.hidden = el.dataset.ifDrop !== flow.dataset.drop));
+      });
+      // "next": only the first upcoming entry
+      document.querySelectorAll<HTMLElement>('[data-next]').forEach((box) => {
+        const first = box.querySelector<HTMLElement>('[data-ends]:not([hidden])');
+        box.querySelectorAll<HTMLElement>('[data-ends]').forEach((el) => (el.hidden = el !== first));
+        box.hidden = !first;
+      });
+      // "last": only the most recent past entry, and only when nothing is coming up
+      document.querySelectorAll<HTMLElement>('[data-last]').forEach((box) => {
+        const first = box.querySelector<HTMLElement>('[data-ends]:not([hidden])');
+        box.querySelectorAll<HTMLElement>('[data-ends]').forEach((el) => (el.hidden = el !== first));
+        const sib = box.previousElementSibling as HTMLElement | null;
+        box.hidden = !first || !!(sib && sib.hasAttribute('data-next') && !sib.hidden);
+      });
+      // release badges: "out 12.11.26" before, "out now" for 60 days after, then the plain date
+      document.querySelectorAll<HTMLElement>('[data-release-at]').forEach((el) => {
+        if (el.dataset.orig === undefined) el.dataset.orig = el.textContent || '';
+        const at = Number(el.dataset.releaseAt);
+        el.textContent = now < at ? (el.dataset.pre || el.dataset.orig) : now < at + 60 * 86400000 ? (el.dataset.out || el.dataset.orig) : el.dataset.orig;
+      });
+      window.__brNow = now;
+      document.dispatchEvent(new CustomEvent('br:time', { detail: now }));
+    };
+    apply(Date.now());
+    setInterval(() => apply(Date.now()), 30_000);
+    document.addEventListener('visibilitychange', () => { if (!document.hidden) apply(Date.now()); });
     // menu: clear at the top, page colour once scrolled
     const navEl = document.querySelector<HTMLElement>('.site-nav');
     const onScroll = () => navEl?.classList.toggle('scrolled', window.scrollY > 8);

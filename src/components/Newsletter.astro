@@ -27,7 +27,14 @@ const { cta = 'join the roommates', id = 'nl', note = '' } = Astro.props;
           msg.hidden = false;
           return;
         }
-        if (data.url) { window.open(data.url, '_blank'); msg.textContent = 'one quick check opened in a new tab — finish there and you’re in.'; msg.hidden = false; }
+        if (data.url) {
+          // Kit wants a quick "are you human" check — give a tap-able link (pop-ups after a wait get blocked)
+          msg.innerHTML = '';
+          const a = document.createElement('a');
+          a.href = data.url; a.target = '_blank'; a.rel = 'noopener'; a.textContent = 'one quick check — tap here to finish joining';
+          msg.append(a); msg.hidden = false;
+          return;
+        }
         else throw new Error('unexpected');
       } catch {
         form.submit(); // fall back to Kit's own page
