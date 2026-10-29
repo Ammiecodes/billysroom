@@ -86,6 +86,9 @@ collections:
       - { name: type, label: type, widget: select, options: [single, ep, album], default: single }
       - { name: release_date, label: release date, widget: datetime, input_timezone: Africa/Lagos, hint: 'release day, 12am lagos time — the page flips from pre-save to listen at this moment.' }
       - { name: cover, label: cover art, widget: image, required: false, hint: 'square artwork' }
+      - { name: bg_color, label: page background colour, widget: select, options: [deep, earth, tobacco, boiler, chill, space, cupid, lagos], default: deep, hint: 'palette colour behind the release page. space, cupid and lagos switch the text to deep.' }
+      - { name: bg_image, label: page background photo, widget: image, required: false, hint: 'optional. shown as-is, on top of the colour.' }
+      - { name: title_color, label: song title colour, widget: select, options: [cupid, lagos, space, deep, earth, tobacco, boiler, chill], default: cupid }
       - { name: description, label: short description, widget: text, required: false }
       - { name: artists, label: main artist(s), widget: string, default: billysroom }
       - { name: featured, label: featured artists, widget: list, required: false, hint: 'one per line' }

@@ -18,8 +18,8 @@ const presave = platformLinks(r.presave);
 const desc = r.description || `${r.title} — new ${typeLabel(r.type)} by ${r.artists}${feats}.`;
 const pageUrl = new URL(`/music/${release.id}`, Astro.site).toString();
 ---
-<Base tone="deep" theme="release-page" title={`${r.title}${feats}`} current="music" image={r.cover} description={desc}>
-  <article class="release" data-release-page data-at={at} data-title={r.title} data-artists={`${r.artists}${feats}`} data-url={pageUrl}>
+<Base tone={r.bg_color} bg={r.bg_image} theme="release-page" title={`${r.title}${feats}`} current="music" image={r.cover} description={desc}>
+  <article class="release" style={`--title-color: var(--${r.title_color})`} data-release-page data-at={at} data-title={r.title} data-artists={`${r.artists}${feats}`} data-url={pageUrl}>
     <div class="release-art">
       {r.cover ? <img src={r.cover} alt={`${r.title} cover art`} /> : <span class="rel-art-empty">{r.title}</span>}
     </div>
@@ -49,7 +49,7 @@ const pageUrl = new URL(`/music/${release.id}`, Astro.site).toString();
       <!-- release day onwards -->
       <div class="phase" data-phase="out" hidden>
         {stream.length > 0
-          ? <div class="dsp-grid">{stream.map((p) => <a class="pill" href={p.href} target="_blank" rel="noopener">{p.label} ↗</a>)}</div>
+          ? <div class="dsp-grid">{stream.map((p) => <a class="pill solid" href={p.href} target="_blank" rel="noopener">{p.label} ↗</a>)}</div>
           : <p class="meta">streaming links coming shortly.</p>}
       </div>
 

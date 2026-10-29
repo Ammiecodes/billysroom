@@ -21,13 +21,6 @@ const upcoming = [
     <Logo page="home"><span class="sr"> — {site.tagline}</span></Logo>
 
     <div class="hero-actions">
-    <div data-next>
-      {upcoming.map((u) => (
-        <a class="next-up" href={u.href} data-ends={endsAt(u.date)} data-when="upcoming">
-          <b>next up ✦</b>{u.name} | {u.place} · {longDate(u.date)}
-        </a>
-      ))}
-    </div>
 
     <div class="pills">
       <a class="pill" href="/music">listen</a>

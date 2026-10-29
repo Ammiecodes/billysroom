@@ -3,7 +3,7 @@ import '../styles/global.css';
 import site from '../data/site.json';
 import Icons from '../components/Icons.astro';
 const { title, description = site.tagline, bg = '', theme = '', tone = 'deep', current = '', image = '' } = Astro.props;
-const toneHex: Record<string, string> = { deep: '#2e1d6c', earth: '#214732', tobacco: '#6d4f45' };
+const toneHex: Record<string, string> = { deep: '#2e1d6c', earth: '#214732', tobacco: '#6d4f45', boiler: '#cc3300', chill: '#6785fe', space: '#dbdce4', cupid: '#fab4eb', lagos: '#feea3b' };
 const fullTitle = title ? `${title} – [billysroom]` : '[billysroom]';
 const nav = [
   { href: '/', label: 'dj', key: 'home' },
