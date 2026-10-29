@@ -2,7 +2,9 @@
 import '../styles/global.css';
 import site from '../data/site.json';
 import Icons from '../components/Icons.astro';
+import { photoEdges } from '../lib/edges';
 const { title, description = site.tagline, bg = '', theme = '', tone = 'deep', current = '', image = '' } = Astro.props;
+const edges = bg ? await photoEdges(bg) : null;
 const toneHex: Record<string, string> = { deep: '#2e1d6c', earth: '#214732', tobacco: '#6d4f45', boiler: '#cc3300', chill: '#6785fe', space: '#dbdce4', cupid: '#fab4eb', lagos: '#feea3b' };
 const fullTitle = title ? `${title} – [billysroom]` : '[billysroom]';
 const nav = [
@@ -23,7 +25,8 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
   <title>{fullTitle}</title>
   <meta name="description" content={description} />
   <link rel="canonical" href={canonical} />
-  <meta name="theme-color" content={toneHex[tone] || toneHex.deep} />
+  <meta name="theme-color" content={edges ? edges.top : (toneHex[tone] || toneHex.deep)} />
+  {edges && <style set:html={`html{background:${edges.bottom}!important}`}></style>}
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="[billysroom]" />
   <meta property="og:title" content={fullTitle} />
