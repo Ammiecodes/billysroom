@@ -1,0 +1,140 @@
+---
+import Base from '../../layouts/Base.astro';
+import Player from '../../components/Player.astro';
+import Newsletter from '../../components/Newsletter.astro';
+import site from '../../data/site.json';
+import { getReleases, longDate, shortDate, typeLabel, platformLinks } from '../../lib/util';
+
+export async function getStaticPaths() {
+  const releases = await getReleases();
+  return releases.map((r) => ({ params: { slug: r.id }, props: { release: r } }));
+}
+const { release } = Astro.props;
+const r = release.data;
+const at = r.release_date.getTime();
+const feats = r.featured.length ? ` ft. ${r.featured.join(', ')}` : '';
+const stream = platformLinks(r.links);
+const presave = platformLinks(r.presave);
+const desc = r.description || `${r.title} — new ${typeLabel(r.type)} by ${r.artists}${feats}.`;
+const pageUrl = new URL(`/music/${release.id}`, Astro.site).toString();
+---
+<Base tone={r.bg_color} bg={r.bg_image} theme="release-page" title={`${r.title}${feats}`} current="music" image={r.cover} description={desc}>
+  <article class="release" style={`--title-color: var(--${r.title_color})`} data-release-page data-at={at} data-title={r.title} data-artists={`${r.artists}${feats}`} data-url={pageUrl}>
+    <div class="release-art">
+      {r.cover ? <img src={r.cover} alt={`${r.title} cover art`} /> : <span class="rel-art-empty">{r.title}</span>}
+    </div>
+
+    <div class="release-info">
+      <p class="rel-kicker">{typeLabel(r.type)} · <span data-release-at={at} data-pre={`out ${longDate(r.release_date)}`} data-out={`out ${longDate(r.release_date)}`}>{longDate(r.release_date)}</span></p>
+      <h1 class="rel-title">{r.title}</h1>
+      <p class="rel-artists">{r.artists}{r.featured.length > 0 && <> <span>ft.</span> {r.featured.join(', ')}</>}</p>
+      {r.description && <p class="rel-desc">{r.description}</p>}
+
+      <!-- order: reminders (secondary) → main link + dj pack (primary) → individual platforms -->
+      <!-- 1. before release day: reminders -->
+      <div class="phase" data-phase="pre" hidden>
+        <p class="countdown" data-countdown></p>
+        <div class="remind">
+          <p class="meta">get it in your inbox on release day:</p>
+          <Newsletter id={`nl-${release.id}`} cta="remind me 💌" formId={(site as any).kit_release_form_id} />
+          <button class="pill" type="button" data-ics>add release day to calendar</button>
+        </div>
+        {r.presave_url && <a class="pill solid" href={r.presave_url} target="_blank" rel="noopener">pre-save {r.title}</a>}
+      </div>
+
+      <!-- 1. release day onwards: the main listen link -->
+      {r.presave_url && (
+        <div class="phase" data-phase="out" hidden>
+          <a class="pill solid" href={r.presave_url} target="_blank" rel="noopener">listen to {r.title} ↗</a>
+        </div>
+      )}
+
+      <!-- 2. dj pack (any time) -->
+      {r.dj_pack_url && (
+        <div class="djpack">
+          <a class="pill solid" href={r.dj_pack_url} target="_blank" rel="noopener">{r.dj_pack_label} ↓</a>
+          {r.dj_pack_note && <p class="meta">{r.dj_pack_note}</p>}
+        </div>
+      )}
+
+      <!-- 3. individual platforms, after the dj pack -->
+      {presave.length > 0 && (
+        <div class="phase" data-phase="pre" hidden>
+          <div class="dsp-grid presave">
+            {presave.map((p) => <a class="pill small" href={p.href} target="_blank" rel="noopener">pre-save on {p.label} ↗</a>)}
+          </div>
+        </div>
+      )}
+      <div class="phase" data-phase="out" hidden>
+        {stream.length > 0
+          ? <div class="dsp-grid">{stream.map((p) => <a class="pill solid" href={p.href} target="_blank" rel="noopener">{p.label} ↗</a>)}</div>
+          : !r.presave_url && <p class="meta">streaming links coming shortly.</p>}
+      </div>
+
+      <button class="share" type="button" data-share>share ↗</button>
+    </div>
+  </article>
+
+  {r.player_url && <div class="release-player" data-phase-player><Player url={r.player_url} title={r.title} /></div>}
+
+  {r.tracks.length > 0 && (
+    <section class="tracklist">
+      <h2 class="h2">tracklist</h2>
+      <ol>
+        {r.tracks.map((t) => (
+          <li><span class="t-title">{t.title}{t.featured && <small> ft. {t.featured}</small>}</span>{t.duration && <span class="t-dur">{t.duration}</span>}</li>
+        ))}
+      </ol>
+    </section>
+  )}
+
+  {r.label && <p class="meta" style="text-align:center;margin-top:24px">{r.label}</p>}
+  <p style="text-align:center;margin-top:28px"><a class="pill small" href="/music#releases">all releases</a></p>
+
+  <script>
+    const page = document.querySelector<HTMLElement>('[data-release-page]');
+    if (page) {
+      const at = Number(page.dataset.at);
+      // calendar date (YYYYMMDD) of a moment, in Lagos time
+      const lagosYmd = (t: number) => new Intl.DateTimeFormat('en-CA', { timeZone: 'Africa/Lagos', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date(t)).replace(/-/g, '');
+      const dayNum = (t: number) => { const y = lagosYmd(t); return Date.UTC(+y.slice(0, 4), +y.slice(4, 6) - 1, +y.slice(6, 8)) / 86400000; };
+      // pre-save ↔ out now, plus the countdown, re-checked by the site's time engine
+      const update = (now: number) => {
+        const out = now >= at;
+        page.querySelectorAll<HTMLElement>('[data-phase]').forEach((el) => (el.hidden = el.dataset.phase !== (out ? 'out' : 'pre')));
+        const cd = page.querySelector<HTMLElement>('[data-countdown]');
+        if (cd && !out) {
+          const days = dayNum(at) - dayNum(now);
+          cd.textContent = days <= 0 ? 'out today' : days === 1 ? 'out tomorrow' : `out in ${days} days`;
+        }
+      };
+      document.addEventListener('br:time', (e) => update((e as CustomEvent<number>).detail));
+      update(window.__brNow ?? Date.now());
+      // calendar reminder (.ics) — works with apple, google and outlook calendars
+      page.querySelector('[data-ics]')?.addEventListener('click', () => {
+        const start = lagosYmd(at);
+        const end = new Date((dayNum(at) + 1) * 86400000).toISOString().slice(0, 10).replace(/-/g, '');
+        const ics = [
+          'BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//billysroom//release//EN', 'BEGIN:VEVENT',
+          `UID:${at}-${(page.dataset.title || '').replace(/\s+/g, '-')}@billysroom.today`, `DTSTAMP:${new Date().toISOString().replace(/[-:]/g, '').slice(0, 15)}Z`,
+          `DTSTART;VALUE=DATE:${start}`, `DTEND;VALUE=DATE:${end}`,
+          `SUMMARY:${page.dataset.title} — ${page.dataset.artists} is out`, `URL:${page.dataset.url}`,
+          `DESCRIPTION:listen: ${page.dataset.url}`, 'END:VEVENT', 'END:VCALENDAR',
+        ].join('\r\n');
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(new Blob([ics], { type: 'text/calendar' }));
+        a.download = `${page.dataset.title}.ics`;
+        a.click();
+      });
+      // share
+      page.querySelector<HTMLButtonElement>('[data-share]')?.addEventListener('click', async (e) => {
+        const btn = e.currentTarget as HTMLButtonElement;
+        const data = { title: page.dataset.title, text: `${page.dataset.title} — ${page.dataset.artists}`, url: page.dataset.url };
+        try {
+          if (navigator.share) await navigator.share(data);
+          else { await navigator.clipboard.writeText(data.url!); btn.textContent = 'link copied ✦'; }
+        } catch { /* closed */ }
+      });
+    }
+  </script>
+</Base>
