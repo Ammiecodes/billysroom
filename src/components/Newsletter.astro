@@ -1,9 +1,10 @@
 ---
 // Sign-ups go straight into the Kit form, so Kit tags, sequences and automations fire as before.
 import site from '../data/site.json';
-const { cta = 'join the roommates', id = 'nl', note = '' } = Astro.props;
+const { cta = 'join the roommates', id = 'nl', note = '', formId = '' } = Astro.props;
+const form = formId || site.kit_form_id;
 ---
-<form class="signup" data-kit action={`https://app.kit.com/forms/${site.kit_form_id}/subscriptions`} method="post" target="_blank">
+<form class="signup" data-kit action={`https://app.kit.com/forms/${form}/subscriptions`} method="post" target="_blank">
   <label class="sr" for={id}>email address</label>
   <input id={id} type="email" name="email_address" placeholder="💌 email address" required autocomplete="email" />
   <button class="pill solid" type="submit">{cta}</button>

@@ -210,6 +210,7 @@ collections:
           - { name: kolanut_intro, label: kolanut.fm intro, widget: text }
           - { name: kolanut_instagram, label: kolanut.fm instagram link, widget: string, required: false }
           - { name: kit_form_id, label: kit form id, widget: string, hint: 'the number in your kit form link' }
+          - { name: kit_release_form_id, label: kit form id — release reminders, widget: string, required: false, hint: 'the kit form behind "remind me" on release pages (tagged DJreleases in kit). leave blank to use the main roommates form.' }
           - { name: newsletter_url, label: newsletter page, widget: string }
           - { name: press_kit_url, label: notion press kit, widget: string, required: false }
           - { name: press_photos_url, label: hi-res photos folder link, widget: string, required: false }

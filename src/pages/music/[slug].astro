@@ -42,7 +42,7 @@ const pageUrl = new URL(`/music/${release.id}`, Astro.site).toString();
         <div class="remind">
           <button class="pill" type="button" data-ics>add release day to calendar</button>
           <p class="meta">or get it in your inbox on release day:</p>
-          <Newsletter id={`nl-${release.id}`} cta="remind me 💌" />
+          <Newsletter id={`nl-${release.id}`} cta="remind me 💌" formId={(site as any).kit_release_form_id} />
         </div>
       </div>
 
