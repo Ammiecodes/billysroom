@@ -1,0 +1,123 @@
+---
+import Base from '../../layouts/Base.astro';
+import Player from '../../components/Player.astro';
+import Newsletter from '../../components/Newsletter.astro';
+import site from '../../data/site.json';
+import { getReleases, longDate, shortDate, typeLabel, platformLinks } from '../../lib/util';
+
+export async function getStaticPaths() {
+  const releases = await getReleases();
+  return releases.map((r) => ({ params: { slug: r.id }, props: { release: r } }));
+}
+const { release } = Astro.props;
+const r = release.data;
+const at = r.release_date.getTime();
+const feats = r.featured.length ? ` ft. ${r.featured.join(', ')}` : '';
+const stream = platformLinks(r.links);
+const presave = platformLinks(r.presave);
+const desc = r.description || `${r.title} — new ${typeLabel(r.type)} by ${r.artists}${feats}.`;
+const pageUrl = new URL(`/music/${release.id}`, Astro.site).toString();
+---
+<Base tone="deep" theme="release-page" title={`${r.title}${feats}`} current="music" image={r.cover} description={desc}>
+  <article class="release" data-release-page data-at={at} data-title={r.title} data-artists={`${r.artists}${feats}`} data-url={pageUrl}>
+    <div class="release-art">
+      {r.cover ? <img src={r.cover} alt={`${r.title} cover art`} /> : <span class="rel-art-empty">{r.title}</span>}
+    </div>
+
+    <div class="release-info">
+      <p class="rel-kicker">{typeLabel(r.type)} · <span data-release-at={at} data-pre={`out ${longDate(r.release_date)}`} data-out={`out ${longDate(r.release_date)}`}>{longDate(r.release_date)}</span></p>
+      <h1 class="rel-title">{r.title}</h1>
+      <p class="rel-artists">{r.artists}{r.featured.length > 0 && <> <span>ft.</span> {r.featured.join(', ')}</>}</p>
+      {r.description && <p class="rel-desc">{r.description}</p>}
+
+      <!-- before release day -->
+      <div class="phase" data-phase="pre" hidden>
+        <p class="countdown" data-countdown></p>
+        {r.presave_url && <a class="pill solid" href={r.presave_url} target="_blank" rel="noopener">pre-save {r.title}</a>}
+        {presave.length > 0 && (
+          <div class="dsp-grid presave">
+            {presave.map((p) => <a class="pill small" href={p.href} target="_blank" rel="noopener">pre-save on {p.label} ↗</a>)}
+          </div>
+        )}
+        <div class="remind">
+          <button class="pill" type="button" data-ics>add release day to calendar</button>
+          <p class="meta">or get it in your inbox on release day:</p>
+          <Newsletter id={`nl-${release.id}`} cta="remind me 💌" />
+        </div>
+      </div>
+
+      <!-- release day onwards -->
+      <div class="phase" data-phase="out" hidden>
+        {stream.length > 0
+          ? <div class="dsp-grid">{stream.map((p) => <a class="pill" href={p.href} target="_blank" rel="noopener">{p.label} ↗</a>)}</div>
+          : <p class="meta">streaming links coming shortly.</p>}
+      </div>
+
+      {r.dj_pack_url && (
+        <div class="djpack">
+          <a class="pill solid" href={r.dj_pack_url} target="_blank" rel="noopener">{r.dj_pack_label} ↓</a>
+          {r.dj_pack_note && <p class="meta">{r.dj_pack_note}</p>}
+        </div>
+      )}
+
+      <button class="share" type="button" data-share>share ↗</button>
+    </div>
+  </article>
+
+  {r.player_url && <div class="release-player" data-phase-player><Player url={r.player_url} title={r.title} /></div>}
+
+  {r.tracks.length > 0 && (
+    <section class="tracklist">
+      <h2 class="h2">tracklist</h2>
+      <ol>
+        {r.tracks.map((t) => (
+          <li><span class="t-title">{t.title}{t.featured && <small> ft. {t.featured}</small>}</span>{t.duration && <span class="t-dur">{t.duration}</span>}</li>
+        ))}
+      </ol>
+    </section>
+  )}
+
+  {r.label && <p class="meta" style="text-align:center;margin-top:24px">{r.label}</p>}
+  <p style="text-align:center;margin-top:28px"><a class="pill small" href="/music#releases">all releases</a></p>
+
+  <script>
+    const page = document.querySelector<HTMLElement>('[data-release-page]');
+    if (page) {
+      const at = Number(page.dataset.at);
+      const now = Date.now();
+      const out = now >= at;
+      page.querySelectorAll<HTMLElement>('[data-phase]').forEach((el) => (el.hidden = el.dataset.phase !== (out ? 'out' : 'pre')));
+      const cd = page.querySelector<HTMLElement>('[data-countdown]');
+      if (cd && !out) {
+        const days = Math.ceil((at - now) / 86400000);
+        cd.textContent = days <= 1 ? 'out tomorrow' : `out in ${days} days`;
+      }
+      // calendar reminder (.ics) — works with apple, google and outlook calendars
+      page.querySelector('[data-ics]')?.addEventListener('click', () => {
+        const d = new Date(at);
+        const ymd = (x: Date) => x.toISOString().slice(0, 10).replace(/-/g, '');
+        const next = new Date(at + 86400000);
+        const ics = [
+          'BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//billysroom//release//EN', 'BEGIN:VEVENT',
+          `UID:${at}-${page.dataset.title}@billysroom.today`, `DTSTAMP:${ymd(new Date())}T000000Z`,
+          `DTSTART;VALUE=DATE:${ymd(d)}`, `DTEND;VALUE=DATE:${ymd(next)}`,
+          `SUMMARY:${page.dataset.title} — ${page.dataset.artists} is out`, `URL:${page.dataset.url}`,
+          `DESCRIPTION:listen: ${page.dataset.url}`, 'END:VEVENT', 'END:VCALENDAR',
+        ].join('\r\n');
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(new Blob([ics], { type: 'text/calendar' }));
+        a.download = `${page.dataset.title}.ics`;
+        a.click();
+      });
+      // share
+      page.querySelector<HTMLButtonElement>('[data-share]')?.addEventListener('click', async (e) => {
+        const btn = e.currentTarget as HTMLButtonElement;
+        const data = { title: page.dataset.title, text: `${page.dataset.title} — ${page.dataset.artists}`, url: page.dataset.url };
+        try {
+          if (navigator.share) await navigator.share(data);
+          else { await navigator.clipboard.writeText(data.url!); btn.textContent = 'link copied ✦'; }
+        } catch { /* closed */ }
+      });
+    }
+  </script>
+</Base>

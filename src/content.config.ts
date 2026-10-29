@@ -63,4 +63,45 @@ const kolanut = defineCollection({
   }),
 });
 
-export const collections = { gigs, mixes, drops, kolanut };
+const platformLinks = z.object({
+  spotify: z.string().optional().default(''),
+  apple_music: z.string().optional().default(''),
+  youtube_music: z.string().optional().default(''),
+  audiomack: z.string().optional().default(''),
+  boomplay: z.string().optional().default(''),
+  soundcloud: z.string().optional().default(''),
+  beatport: z.string().optional().default(''),
+  bandcamp: z.string().optional().default(''),
+  deezer: z.string().optional().default(''),
+  tidal: z.string().optional().default(''),
+  amazon_music: z.string().optional().default(''),
+}).optional().default({});
+
+const releases = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/releases' }),
+  schema: z.object({
+    title: z.string(),
+    type: z.enum(['single', 'ep', 'album']).default('single'),
+    release_date: z.coerce.date(),
+    cover: z.string().optional().default(''),
+    description: z.string().optional().default(''),
+    artists: z.string().optional().default('billysroom'),
+    featured: z.array(z.string()).optional().default([]),
+    label: z.string().optional().default(''),
+    tracks: z.array(z.object({
+      title: z.string(),
+      featured: z.string().optional().default(''),
+      duration: z.string().optional().default(''),
+    })).optional().default([]),
+    player_url: z.string().optional().default(''),
+    presave_url: z.string().optional().default(''),
+    presave: platformLinks,
+    links: platformLinks,
+    dj_pack_url: z.string().optional().default(''),
+    dj_pack_label: z.string().optional().default('download dj pack'),
+    dj_pack_note: z.string().optional().default(''),
+    hidden: z.boolean().optional().default(false),
+  }),
+});
+
+export const collections = { gigs, mixes, drops, kolanut, releases };

@@ -7,7 +7,7 @@ const toneHex: Record<string, string> = { deep: '#2e1d6c', earth: '#214732', tob
 const fullTitle = title ? `${title} – [billysroom]` : '[billysroom]';
 const nav = [
   { href: '/', label: 'dj', key: 'home' },
-  { href: '/sessions', label: 'sessions', key: 'sessions' },
+  { href: '/music', label: 'music', key: 'music' },
   { href: '/dates', label: 'dates', key: 'dates' },
   { href: '/exclusive', label: 'exclusive', key: 'exclusive' },
   { href: '/press', label: 'press', key: 'press' },
@@ -79,6 +79,16 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
       const sib = box.previousElementSibling as HTMLElement | null;
       box.hidden = !first || !!(sib && sib.hasAttribute('data-next') && !sib.hidden);
     });
+    // release badges: "out 12.11.26" before, "out now" for 60 days after, then the date
+    document.querySelectorAll<HTMLElement>('[data-release-at]').forEach((el) => {
+      const at = Number(el.dataset.releaseAt);
+      if (now < at) el.textContent = el.dataset.pre || el.textContent;
+      else if (now < at + 60 * 86400000) el.textContent = el.dataset.out || el.textContent;
+    });
+    // menu: clear at the top, page colour once scrolled
+    const navEl = document.querySelector<HTMLElement>('.site-nav');
+    const onScroll = () => navEl?.classList.toggle('scrolled', window.scrollY > 8);
+    onScroll(); window.addEventListener('scroll', onScroll, { passive: true });
     // YouTube: load the real player only when tapped (keeps pages fast)
     document.querySelectorAll<HTMLButtonElement>('button[data-yt]').forEach((b) => {
       b.addEventListener('click', () => {

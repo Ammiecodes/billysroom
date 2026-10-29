@@ -17,6 +17,13 @@ publish_mode: simple
 
 media_folder: public/images/uploads
 public_folder: /images/uploads
+# every uploaded image is converted to web-friendly webp (max 2400px) so pages stay fast
+media_libraries:
+  default:
+    config:
+      slugify_filename: true
+      transformations:
+        raster_image: { format: webp, quality: 85, width: 2400, height: 2400 }
 
 collections:
   - name: gigs
@@ -65,10 +72,80 @@ collections:
       - { name: sold_out, label: invites closed, widget: boolean, required: false, default: false }
       - { name: hidden, label: hide from site, widget: boolean, required: false, default: false }
 
+  - name: releases
+    label: releases
+    label_singular: release
+    description: your own music — singles, eps, albums. each gets its own page (billysroom.today/music/…). before release day it shows pre-save buttons and a countdown; on release day it switches to the streaming links by itself.
+    folder: src/content/releases
+    create: true
+    slug: '{{title}}'
+    summary: '{{title}} · {{type}} · {{release_date}}'
+    sortable_fields: [release_date, title]
+    fields:
+      - { name: title, label: title, widget: string }
+      - { name: type, label: type, widget: select, options: [single, ep, album], default: single }
+      - { name: release_date, label: release date, widget: datetime, input_timezone: Africa/Lagos, hint: 'release day, 12am lagos time — the page flips from pre-save to listen at this moment.' }
+      - { name: cover, label: cover art, widget: image, required: false, hint: 'square artwork' }
+      - { name: description, label: short description, widget: text, required: false }
+      - { name: artists, label: main artist(s), widget: string, default: billysroom }
+      - { name: featured, label: featured artists, widget: list, required: false, hint: 'one per line' }
+      - name: tracks
+        label: tracklist (eps & albums)
+        widget: list
+        required: false
+        summary: '{{fields.title}}'
+        fields:
+          - { name: title, label: track title, widget: string }
+          - { name: featured, label: featuring, widget: string, required: false }
+          - { name: duration, label: length, widget: string, required: false, hint: 'e.g. 6:42' }
+      - { name: player_url, label: player link, widget: string, required: false, hint: 'optional. a soundcloud, youtube, spotify or apple music link to embed a player on the page.' }
+      - { name: presave_url, label: pre-save smart link, widget: string, required: false, hint: 'optional. if a service gives you one pre-save link for all platforms, paste it here — it becomes the main pre-save button.' }
+      - name: presave
+        label: pre-save links (before release)
+        widget: object
+        collapsed: true
+        required: false
+        hint: 'per-platform pre-save / pre-add pages (e.g. spotify countdown page, apple music pre-add, audiomack pre-release). leave blank to hide.'
+        fields:
+          - { name: spotify, label: spotify, widget: string, required: false }
+          - { name: apple_music, label: apple music, widget: string, required: false }
+          - { name: youtube_music, label: youtube music, widget: string, required: false }
+          - { name: audiomack, label: audiomack, widget: string, required: false }
+          - { name: boomplay, label: boomplay, widget: string, required: false }
+          - { name: soundcloud, label: soundcloud, widget: string, required: false }
+          - { name: beatport, label: beatport, widget: string, required: false }
+          - { name: bandcamp, label: bandcamp, widget: string, required: false }
+          - { name: deezer, label: deezer, widget: string, required: false }
+          - { name: tidal, label: tidal, widget: string, required: false }
+          - { name: amazon_music, label: amazon music, widget: string, required: false }
+      - name: links
+        label: streaming links (from release day)
+        widget: object
+        collapsed: true
+        required: false
+        hint: 'only the ones you fill in show.'
+        fields:
+          - { name: spotify, label: spotify, widget: string, required: false }
+          - { name: apple_music, label: apple music, widget: string, required: false }
+          - { name: youtube_music, label: youtube music, widget: string, required: false }
+          - { name: audiomack, label: audiomack, widget: string, required: false }
+          - { name: boomplay, label: boomplay, widget: string, required: false }
+          - { name: soundcloud, label: soundcloud, widget: string, required: false }
+          - { name: beatport, label: beatport, widget: string, required: false }
+          - { name: bandcamp, label: bandcamp, widget: string, required: false }
+          - { name: deezer, label: deezer, widget: string, required: false }
+          - { name: tidal, label: tidal, widget: string, required: false }
+          - { name: amazon_music, label: amazon music, widget: string, required: false }
+      - { name: dj_pack_url, label: dj pack link, widget: string, required: false, hint: 'google drive / dropbox / wetransfer link. free download, no sign-up.' }
+      - { name: dj_pack_label, label: dj pack button text, widget: string, required: false, default: 'download dj pack' }
+      - { name: dj_pack_note, label: what's in the pack, widget: string, required: false, hint: 'e.g. extended mix, radio edit, instrumental — wav + mp3' }
+      - { name: label, label: label / credits line, widget: string, required: false }
+      - { name: hidden, label: hide from site, widget: boolean, required: false, default: false }
+
   - name: mixes
-    label: sessions / mixes
+    label: mixes & live sets
     label_singular: mix
-    description: paste a soundcloud, youtube or mixcloud link — the player is made for you. youtube links show under "live sets".
+    description: paste a soundcloud, youtube or mixcloud link — the player is made for you. youtube links show under "live sets" on /music.
     folder: src/content/mixes
     create: true
     slug: '{{title}}'
@@ -84,7 +161,7 @@ collections:
   - name: kolanut
     label: kolanut.fm
     label_singular: episode
-    description: kolanut.fm episodes. paste the youtube link — they show under the "kolanut.fm" tab on /sessions. while there are none, the tab shows "coming soon".
+    description: kolanut.fm episodes. paste the youtube link — they show under the "kolanut.fm" tab on /music. while there are none, the tab shows "coming soon".
     folder: src/content/kolanut
     create: true
     slug: 'episode-{{episode}}'
@@ -135,12 +212,12 @@ collections:
           - { name: press_photos, label: press photos, widget: list, field: { name: photo, label: photo, widget: image }, required: false }
           - { name: rider_file, label: tech rider (pdf), widget: file, required: false }
           - { name: logo_home, label: logo — home, widget: image, required: false, hint: 'svg or transparent png' }
-          - { name: logo_sessions, label: logo — sessions, widget: image, required: false }
+          - { name: logo_sessions, label: logo — music, widget: image, required: false }
           - { name: logo_exclusive, label: logo — exclusive, widget: image, required: false }
           - { name: logo_press, label: logo — press & booking, widget: image, required: false }
           - { name: hero_image, label: home page photo, widget: image, required: false, hint: 'fills the whole home page unless you add a second photo below' }
           - { name: home_sections_image, label: home page photo — scroll sections, widget: image, required: false, hint: 'optional. a different photo behind latest mix, dates, billy’s room, about and roommates.' }
-          - { name: sessions_image, label: sessions page photo, widget: image, required: false }
+          - { name: sessions_image, label: music page photo, widget: image, required: false }
           - { name: dates_image, label: dates page photo, widget: image, required: false }
           - { name: exclusive_image, label: exclusive page background, widget: image, required: false }
           - { name: press_image, label: press page photo, widget: image, required: false }

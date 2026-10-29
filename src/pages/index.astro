@@ -4,10 +4,12 @@ import Logo from '../components/Logo.astro';
 import Player from '../components/Player.astro';
 import Newsletter from '../components/Newsletter.astro';
 import site from '../data/site.json';
-import { getGigs, getDrops, getMixes, embedFor, endsAt, longDate, shortDate, timeOf } from '../lib/util';
+import ReleaseCard from '../components/ReleaseCard.astro';
+import { getGigs, getDrops, getMixes, getReleases, embedFor, endsAt, longDate, shortDate, timeOf } from '../lib/util';
 const gigs = await getGigs();
 const drops = await getDrops();
 const mixes = await getMixes();
+const releases = await getReleases();
 const latest = mixes.find((m) => embedFor(m.data.url).kind !== 'youtube');
 const upcoming = [
   ...gigs.map((g) => ({ date: g.data.date, name: g.data.venue, place: `${g.data.city} ${g.data.country}`, time: g.data.time_label || timeOf(g.data.date), href: g.data.ticket_url || '/dates', cta: g.data.ticket_url ? 'tickets' : 'details', ext: !!g.data.ticket_url })),
@@ -18,6 +20,7 @@ const upcoming = [
   <section class="hero">
     <Logo page="home"><span class="sr"> — {site.tagline}</span></Logo>
 
+    <div class="hero-actions">
     <div data-next>
       {upcoming.map((u) => (
         <a class="next-up" href={u.href} data-ends={endsAt(u.date)} data-when="upcoming">
@@ -27,22 +30,34 @@ const upcoming = [
     </div>
 
     <div class="pills">
-      <a class="pill" href="/sessions">listen to sessions</a>
+      <a class="pill" href="/music">listen</a>
       <a class="pill" href="/dates">where to catch me</a>
       <a class="pill solid" href="/press#book">book me</a>
+    </div>
     </div>
 
     <a class="scroll-cue" href="#more" aria-label="scroll for more">↓</a>
   </section>
 
   <div class="below" id="more" style={site.home_sections_image ? `background-image:url(${site.home_sections_image})` : undefined}>
+    {releases.length > 0 && (
+      <section class="home-sec" data-section>
+        <h2 class="kicker">new music</h2>
+        <div data-next data-list="home-rel" data-hide-when-empty>
+          {releases.map((r) => (
+            <div data-ends={r.data.release_date.getTime() + 60 * 86400000} data-when="upcoming"><ReleaseCard release={r} compact /></div>
+          ))}
+        </div>
+        <p class="more"><a href="/music#releases">all releases →</a></p>
+      </section>
+    )}
     {latest && (
       <section class="home-sec">
         <h2 class="kicker">latest mix</h2>
         <h3 class="h3">{latest.data.title}</h3>
         {latest.data.description && <p class="meta" style="margin-bottom:12px">{latest.data.description}</p>}
         <Player url={latest.data.url} title={latest.data.title} />
-        <p class="more"><a href="/sessions">all sessions →</a> <a href="/sessions#live">live sets →</a></p>
+        <p class="more"><a href="/music#mixes">all mixes →</a> <a href="/music#live">live sets →</a></p>
       </section>
     )}
 

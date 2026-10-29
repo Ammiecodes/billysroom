@@ -9,6 +9,12 @@ const e = embedFor(url);
 {e.kind === 'mixcloud' && (
   <iframe class="embed sc" style="height:120px" title={`${title} on Mixcloud`} loading="lazy" allow="autoplay" src={e.src}></iframe>
 )}
+{e.kind === 'spotify' && (
+  <iframe class="embed" style={`height:${e.tall ? 352 : 152}px`} title={`${title} on Spotify`} loading="lazy" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" src={e.src}></iframe>
+)}
+{e.kind === 'apple' && (
+  <iframe class="embed" style={`height:${e.tall ? 450 : 175}px`} title={`${title} on Apple Music`} loading="lazy" allow="autoplay *; encrypted-media *; fullscreen *" sandbox="allow-forms allow-popups allow-same-origin allow-scripts allow-storage-access-by-user-activation allow-top-navigation-by-user-activation" src={e.src}></iframe>
+)}
 {e.kind === 'youtube' && (
   <button class="yt" type="button" data-yt={e.id} aria-label={`Play ${title} on YouTube`}
     style={`background-image:url(https://i.ytimg.com/vi/${e.id}/hqdefault.jpg)`}>

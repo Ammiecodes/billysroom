@@ -21,7 +21,7 @@
   "newsletter_url": "https://billysroom.kit.com/",
   "press_kit_url": "https://billysroom.notion.site/Billysroom-Press-Kit-2e41b27fd3c2806f969cffc1cfcc78d3",
   "rider_file": "",
-  "hero_image": "",
+  "hero_image": "/images/pages/stage-green.webp",
   "press_photos": [],
   "x": "https://x.com/amakamonee",
   "press_photos_url": "https://drive.google.com/drive/folders/1djEKfq7qtklrJwGjv_6X7PUrkA6Ui4ie?usp=drive_link",
@@ -47,8 +47,8 @@
       ]
     }
   ],
-  "sessions_image": "",
-  "dates_image": "",
+  "sessions_image": "/images/pages/hands-bw.webp",
+  "dates_image": "/images/pages/ardour-red.webp",
   "exclusive_image": "",
   "press_image": "",
   "logo_home": "",

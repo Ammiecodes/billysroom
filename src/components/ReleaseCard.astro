@@ -1,0 +1,17 @@
+---
+import { shortDate, typeLabel } from '../lib/util';
+const { release, compact = false } = Astro.props;
+const r = release.data;
+const out = r.release_date.getTime();
+const feats = r.featured.length ? ` ft. ${r.featured.join(', ')}` : '';
+---
+<a class={`rel-card${compact ? ' compact' : ''}`} href={`/music/${release.id}`}>
+  <div class="rel-art">
+    {r.cover ? <img src={r.cover} alt={`${r.title} cover art`} loading="lazy" /> : <span class="rel-art-empty">{r.title}</span>}
+  </div>
+  <div class="rel-meta">
+    <span class="rel-badge" data-release-at={out} data-pre={`${typeLabel(r.type)} · out ${shortDate(r.release_date)}`} data-out={`${typeLabel(r.type)} · out now`}>{typeLabel(r.type)} · {shortDate(r.release_date)}</span>
+    <b>{r.title}</b>
+    <small>{r.artists}{feats}</small>
+  </div>
+</a>

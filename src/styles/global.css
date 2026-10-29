@@ -68,12 +68,14 @@ img { max-width: 100%; display: block; }
 
 /* header */
 .site-nav {
-  position: relative; z-index: 10;
+  position: sticky; top: 0; z-index: 10; transition: background-color .2s;
   display: flex; justify-content: center; gap: clamp(16px, 4vw, 28px);
   padding: 14px 16px;
   font-family: var(--f-nav); font-weight: 800; font-size: 15px; letter-spacing: .01em;
   background: transparent;
 }
+/* sits clear on the photo at the top; picks up the page colour once you scroll so text never runs under it */
+.site-nav.scrolled { background: var(--bg); }
 .site-nav a { text-decoration: none; padding: 4px 2px; }
 .site-nav a:hover { opacity: 1; color: var(--lagos); }
 .site-nav a[aria-current='page'] { opacity: 1; color: var(--lagos); }
@@ -285,3 +287,67 @@ ul.clean { list-style: none; margin: 0; padding: 0; }
 /* on photo pages, text gets a soft shadow in the page colour so it stays legible without tinting the photo */
 .has-photo main :is(h1, h2, h3, p, li, span, small, b, em, label, .meta) { text-shadow: 0 1px 2px rgb(var(--bg-rgb) / .85), 0 0 14px rgb(var(--bg-rgb) / .6); }
 .has-photo .pill, .has-photo .pill * { text-shadow: none; }
+
+/* releases */
+.release-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 150px), 1fr)); gap: 16px; padding-top: 8px; }
+.rel-card { display: grid; gap: 10px; text-decoration: none; }
+.rel-art { aspect-ratio: 1; border-radius: 10px; overflow: hidden; background: rgb(var(--deep-rgb) / .6); display: grid; place-items: center; }
+.rel-art img { width: 100%; height: 100%; object-fit: cover; transition: transform .25s; }
+.rel-card:hover .rel-art img { transform: scale(1.03); }
+.rel-art-empty { font-family: var(--f-display); font-size: 22px; color: var(--cupid); padding: 16px; text-align: center; }
+.rel-meta { display: grid; gap: 2px; }
+.rel-meta b { font-family: var(--f-display); font-size: 17px; color: var(--cupid); }
+.rel-meta small { color: var(--space); font-size: 13px; }
+.rel-badge { font-family: var(--f-mono); font-size: 11px; color: var(--lagos); }
+.rel-card.compact { grid-template-columns: 96px 1fr; align-items: center; gap: 14px; }
+.rel-card.compact .rel-art { width: 96px; }
+
+.release { display: grid; gap: 24px; padding-top: 8px; }
+.release-art { width: min(420px, 100%); margin: 0 auto; aspect-ratio: 1; border-radius: 12px; overflow: hidden; background: rgb(var(--deep-rgb) / .6); display: grid; place-items: center; box-shadow: 0 18px 50px rgb(var(--deep-rgb) / .6); }
+.release-art img { width: 100%; height: 100%; object-fit: cover; }
+.release-info { text-align: center; display: grid; gap: 10px; justify-items: center; }
+.rel-kicker { font-family: var(--f-mono); font-size: 12px; letter-spacing: .08em; color: var(--lagos); margin: 0; text-transform: lowercase; }
+.rel-title { font-family: var(--f-display); font-weight: 700; font-size: clamp(32px, 8vw, 46px); line-height: 1.05; color: var(--cupid); margin: 0; text-transform: lowercase; }
+.rel-artists { margin: 0; font-size: 17px; color: var(--space); }
+.rel-artists span { color: var(--muted); }
+.rel-desc { color: var(--space); max-width: 460px; margin: 6px 0 0; }
+.phase { display: grid; gap: 12px; justify-items: center; width: min(420px, 100%); margin-top: 8px; }
+.phase > .pill.solid { width: 100%; }
+.countdown { font-family: var(--f-mono); font-size: 13px; letter-spacing: .1em; text-transform: uppercase; color: var(--lagos); margin: 0; }
+.dsp-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; width: 100%; }
+.dsp-grid .pill { width: 100%; }
+.dsp-grid.presave { grid-template-columns: 1fr; }
+button.pill { font-family: var(--f-mono); font-size: 13px; color: var(--ink); cursor: pointer; }
+button.pill.solid { color: var(--deep); }
+.remind { display: grid; gap: 8px; width: 100%; justify-items: center; margin-top: 6px; }
+.remind .pill { width: 100%; }
+.remind .signup { width: 100%; }
+.djpack { display: grid; gap: 6px; width: min(420px, 100%); margin-top: 6px; }
+.djpack .pill { width: 100%; }
+.share { background: none; border: 0; color: var(--space); font: 13px var(--f-mono); cursor: pointer; padding: 8px; text-decoration: underline; text-underline-offset: 4px; }
+.share:hover { color: var(--lagos); }
+.release-player { width: min(560px, 100%); margin: 28px auto 0; }
+.tracklist { width: min(560px, 100%); margin: 8px auto 0; }
+.tracklist ol { margin: 0; padding: 0; list-style: none; counter-reset: t; }
+.tracklist li { counter-increment: t; display: grid; grid-template-columns: 32px 1fr auto; gap: 10px; padding: 12px 0; border-bottom: 1px solid var(--faint); }
+.tracklist li::before { content: counter(t, decimal-leading-zero); font-family: var(--f-mono); font-size: 13px; color: var(--lagos); }
+.tracklist small { color: var(--muted); }
+.t-dur { font-family: var(--f-mono); font-size: 13px; color: var(--muted); }
+@media (min-width: 820px) {
+  .release-page main { width: min(880px, 100% - 32px); }
+  .release { grid-template-columns: 1fr 1fr; align-items: center; gap: 40px; }
+  .release-info { text-align: left; justify-items: start; }
+  .phase, .djpack { justify-items: stretch; }
+}
+/* on photo pages nothing sits as a tinted layer over the photo: outline buttons and inputs are fully clear */
+.has-photo .pill:not(.solid):not(.tab.on):not(:hover) { background: transparent; backdrop-filter: none; -webkit-backdrop-filter: none; }
+.has-photo .signup input { background: transparent; }
+
+/* home with a photo: logo up top, buttons down low, so the middle of the photo stays clear */
+.has-photo .hero { justify-content: space-between; padding-top: 24px; padding-bottom: 56px; }
+.has-photo .hero .logo, .has-photo .hero .logo-img { margin-bottom: 0; }
+
+/* music page: body headers in Space; inactive pills solid Deep so they read cleanly on the photo */
+.music-page :is(.logo.page, .h2, .h3, .k-ep, .rel-meta b) { color: var(--space); }
+body.music-page .pill:not(.solid):not(.tab.on):not(:hover):not(.k-head .pill) { background: var(--deep); border-color: var(--deep); color: var(--space); }
+body.music-page .pill:not(.solid):not(.tab.on):not(.k-head .pill):hover { background: var(--lagos); border-color: var(--lagos); color: var(--deep); }

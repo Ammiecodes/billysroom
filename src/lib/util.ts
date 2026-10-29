@@ -56,6 +56,8 @@ export type EmbedInfo =
   | { kind: 'soundcloud'; src: string }
   | { kind: 'youtube'; id: string }
   | { kind: 'mixcloud'; src: string }
+  | { kind: 'spotify'; src: string; tall: boolean }
+  | { kind: 'apple'; src: string; tall: boolean }
   | { kind: 'link'; href: string };
 
 /** Turn any pasted SoundCloud / YouTube / Mixcloud link into a player. */
@@ -68,6 +70,12 @@ export function embedFor(url: string): EmbedInfo {
   }
   const yt = u.match(/(?:youtube\.com\/(?:watch\?(?:.*&)?v=|embed\/|shorts\/|live\/)|youtu\.be\/)([\w-]{11})/i);
   if (yt) return { kind: 'youtube', id: yt[1] };
+  const sp = u.match(/open\.spotify\.com\/(?:intl-[a-z]+\/)?(track|album|playlist|episode)\/([A-Za-z0-9]+)/i);
+  if (sp) return { kind: 'spotify', src: `https://open.spotify.com/embed/${sp[1]}/${sp[2]}`, tall: sp[1] !== 'track' && sp[1] !== 'episode' };
+  if (/music\.apple\.com\//i.test(u)) {
+    const src = u.replace(/^https?:\/\/music\.apple\.com/i, 'https://embed.music.apple.com');
+    return { kind: 'apple', src, tall: !/[?&]i=/.test(u) && /\/album\//.test(u) };
+  }
   const mc = u.match(/mixcloud\.com(\/[^?#]+)/i);
   if (mc) return { kind: 'mixcloud', src: `https://player-widget.mixcloud.com/widget/iframe/?hide_cover=1&light=0&feed=${encodeURIComponent(mc[1].endsWith('/') ? mc[1] : mc[1] + '/')}` };
   return { kind: 'link', href: u };
@@ -77,3 +85,27 @@ export async function getKolanut() {
   const all = (await getCollection('kolanut')).filter((e) => !e.data.hidden);
   return all.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
 }
+
+export async function getReleases() {
+  const all = (await getCollection('releases')).filter((r) => !r.data.hidden);
+  return all.sort((a, b) => b.data.release_date.getTime() - a.data.release_date.getTime());
+}
+
+/** Streaming platforms, in the order buttons appear. */
+export const PLATFORMS: { key: string; label: string }[] = [
+  { key: 'spotify', label: 'spotify' },
+  { key: 'apple_music', label: 'apple music' },
+  { key: 'youtube_music', label: 'youtube music' },
+  { key: 'audiomack', label: 'audiomack' },
+  { key: 'boomplay', label: 'boomplay' },
+  { key: 'soundcloud', label: 'soundcloud' },
+  { key: 'beatport', label: 'beatport' },
+  { key: 'bandcamp', label: 'bandcamp' },
+  { key: 'deezer', label: 'deezer' },
+  { key: 'tidal', label: 'tidal' },
+  { key: 'amazon_music', label: 'amazon music' },
+];
+export const platformLinks = (obj: Record<string, string> = {}) =>
+  PLATFORMS.map((p) => ({ ...p, href: (obj[p.key] || '').trim() })).filter((p) => p.href);
+
+export const typeLabel = (t: string) => (t === 'ep' ? 'ep' : t === 'album' ? 'album' : 'single');
