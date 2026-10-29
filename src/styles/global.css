@@ -200,7 +200,6 @@ input[type='date']::-webkit-calendar-picker-indicator { filter: invert(.9); }
 }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
 
-.exclusive-theme .exclusive-theme .pill.solid { box-shadow: 0 6px 24px rgb(var(--deep-rgb) / .35); }
 .divider { height: 1px; background: var(--faint); margin: 40px 0; border: 0; }
 .tag { display: inline-block; font-family: var(--f-mono); font-size: 11px; color: var(--deep); background: var(--yellow); border-radius: 999px; padding: 2px 8px; margin-left: 6px; vertical-align: 2px; }
 .signup-msg { text-align: center; color: var(--yellow); margin: 4px 0 0; }
@@ -332,7 +331,7 @@ input[type='date']::-webkit-calendar-picker-indicator { filter: invert(.9); }
 .rel-card.compact .rel-art { width: 96px; }
 
 .release { display: grid; gap: 24px; padding-top: 8px; }
-.release-art { width: min(420px, 100%); margin: 0 auto; aspect-ratio: 1; border-radius: 12px; overflow: hidden; background: rgb(var(--deep-rgb) / .6); display: grid; place-items: center; box-shadow: 0 18px 50px rgb(var(--deep-rgb) / .6); }
+.release-art { width: min(420px, 100%); margin: 0 auto; aspect-ratio: 1; border-radius: 12px; overflow: hidden; background: rgb(var(--deep-rgb) / .6); display: grid; place-items: center; }
 .release-art img { width: 100%; height: 100%; object-fit: cover; }
 .release-info { text-align: center; display: grid; gap: 10px; justify-items: center; }
 .rel-kicker { font-family: var(--f-mono); font-size: 12px; letter-spacing: .08em; color: var(--lagos); margin: 0; text-transform: lowercase; }
