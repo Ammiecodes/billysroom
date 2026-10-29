@@ -19,7 +19,7 @@
   --tobacco-rgb: 109 79 69;
   --boiler-rgb: 204 51 0;
   --ink: var(--space);
-  --muted: rgb(var(--space-rgb) / .72);
+  --muted: var(--space); /* secondary text uses full Space everywhere — no faded greys */
   --faint: rgb(var(--space-rgb) / .18);
   /* brand palette */
   --earth: #214732;
@@ -75,7 +75,12 @@ img { max-width: 100%; display: block; }
   background: transparent;
 }
 /* sits clear on the photo at the top; picks up the page colour once you scroll so text never runs under it */
-.site-nav.scrolled { background: var(--bg); }
+.site-nav.scrolled {
+  background: transparent;
+  /* light liquid-glass: the photo still shows through, just softened behind the menu */
+  backdrop-filter: blur(6px) saturate(160%);
+}
+.has-photo .site-nav a { text-shadow: 0 1px 2px rgb(var(--bg-rgb) / .6); }
 .site-nav a { text-decoration: none; padding: 4px 2px; }
 .site-nav a:hover { opacity: 1; color: var(--lagos); }
 .site-nav a[aria-current='page'] { opacity: 1; color: var(--lagos); }
@@ -99,7 +104,7 @@ main { width: min(var(--max), 100% - 32px); margin: 0 auto; padding: 24px 0 48px
   border: 1.5px solid var(--ink); border-radius: 999px;
   font-family: var(--f-mono); font-size: 13px; text-decoration: none; text-align: center;
   background: rgb(var(--bg-rgb) / .55);
-  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
   transition: background .15s, color .15s, border-color .15s;
 }
 .pill:hover { background: var(--lagos); border-color: var(--lagos); color: var(--deep); }
@@ -157,12 +162,16 @@ ul.clean { list-style: none; margin: 0; padding: 0; }
   height: var(--pill-h); border-radius: 999px; border: 1.5px solid var(--ink); background: rgb(var(--bg-rgb) / .5);
   color: var(--ink); padding: 0 18px; font-family: var(--f-mono); font-size: 14px;
 }
-.signup input::placeholder { color: rgb(var(--space-rgb) / .6); }
+/* placeholders + form text: full Space everywhere */
+::placeholder { color: var(--space); opacity: 1; }
+input, textarea, select { color: var(--space); color-scheme: dark; }
+input[type='date']::-webkit-datetime-edit, input[type='date']::-webkit-datetime-edit-fields-wrapper { color: var(--space); }
+input[type='date']::-webkit-calendar-picker-indicator { filter: invert(.9); }
 .callout { text-align: center; max-width: 380px; margin: 0 auto; }
 .callout p { color: var(--muted); font-size: 15px; }
 
 /* press */
-.prose p { color: rgb(var(--space-rgb) / .86); font-size: 16px; }
+.prose p { color: var(--space); font-size: 16px; }
 .chips { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
 .chip { font-family: var(--f-mono); font-size: 12px; border: 1px solid var(--faint); border-radius: 999px; padding: 4px 10px; }
 .form { display: grid; gap: 10px; }
@@ -203,8 +212,8 @@ ul.clean { list-style: none; margin: 0; padding: 0; }
 [data-drop-flow][data-drop='no'] .ex-intro { order: 1; }
 [data-drop-flow][data-drop='no'] .ex-past { order: 2; }
 .ex-past .h2 { margin-top: 0; }
-.ex-intro { margin: 0 auto; color: rgb(var(--space-rgb) / .85); font-size: 16px; }
-.ex-intro p { color: rgb(var(--space-rgb) / .88); margin: 0 0 18px; }
+.ex-intro { margin: 0 auto; color: var(--space); font-size: 16px; }
+.ex-intro p { color: var(--space); margin: 0 0 18px; }
 .editions.clean { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; width: min(740px, 100%); margin: 0 auto; }
 .editions .edition { flex: 0 1 230px; }
 @media (max-width: 520px) { .editions .edition { flex-basis: calc(50% - 6px); padding: 10px 10px 12px; } .edition .h3 { font-size: 14px; } .ed-lineup { font-size: 12px; } }
@@ -233,7 +242,7 @@ ul.clean { list-style: none; margin: 0; padding: 0; }
 .home-sec { width: min(560px, 100%); margin: 0 auto; padding: 36px 0; border-bottom: 1px solid var(--faint); }
 .home-sec:last-child { border-bottom: 0; }
 .kicker { font-family: var(--f-mono); font-weight: 500; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--yellow); margin: 0 0 14px; }
-.lead { font-size: 17px; color: rgb(var(--space-rgb) / .88); margin: 0; }
+.lead { font-size: 17px; color: var(--space); margin: 0; }
 .more { display: flex; flex-wrap: wrap; gap: 18px; margin: 16px 0 0; font-family: var(--f-mono); font-size: 13px; }
 .more a { text-decoration: none; border-bottom: 1px solid var(--faint); padding-bottom: 2px; }
 .more a:hover { color: var(--lagos); border-color: var(--lagos); }
@@ -340,7 +349,7 @@ button.pill.solid { color: var(--deep); }
   .phase, .djpack { justify-items: stretch; }
 }
 /* on photo pages nothing sits as a tinted layer over the photo: outline buttons and inputs are fully clear */
-.has-photo .pill:not(.solid):not(.tab.on):not(:hover) { background: transparent; backdrop-filter: none; -webkit-backdrop-filter: none; }
+.has-photo .pill:not(.solid):not(.tab.on):not(:hover) { background: transparent; backdrop-filter: none; }
 .has-photo .signup input { background: transparent; }
 
 /* home with a photo: logo up top, buttons down low, so the middle of the photo stays clear */
@@ -351,3 +360,7 @@ button.pill.solid { color: var(--deep); }
 .music-page :is(.logo.page, .h2, .h3, .k-ep, .rel-meta b) { color: var(--space); }
 body.music-page .pill:not(.solid):not(.tab.on):not(:hover):not(.k-head .pill) { background: var(--deep); border-color: var(--deep); color: var(--space); }
 body.music-page .pill:not(.solid):not(.tab.on):not(.k-head .pill):hover { background: var(--lagos); border-color: var(--lagos); color: var(--deep); }
+/* older iPhones (iOS 17 and below) only understand the prefixed glass */
+@supports (-webkit-backdrop-filter: none) {
+  .site-nav.scrolled { -webkit-backdrop-filter: blur(6px) saturate(160%); }
+}
