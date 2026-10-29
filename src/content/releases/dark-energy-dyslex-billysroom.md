@@ -1,5 +1,5 @@
 ---
-title: dark energy - dyslex, billysroom
+title: dark energy
 type: single
 release_date: 2026-10-30T00:00:00+01:00
 cover: /images/uploads/decover.webp
