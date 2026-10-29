@@ -294,8 +294,8 @@ input[type='date']::-webkit-calendar-picker-indicator { filter: invert(.9); }
 .tone-tobacco .embed, .tone-tobacco .yt { background-color: rgb(var(--deep-rgb) / .35); }
 
 /* on photo pages, text gets a soft shadow in the page colour so it stays legible without tinting the photo */
-.has-photo main :is(h1, h2, h3, p, li, span, small, b, em, label, .meta) { text-shadow: 0 1px 2px rgb(var(--bg-rgb) / .85), 0 0 14px rgb(var(--bg-rgb) / .6); }
-.has-photo .pill, .has-photo .pill * { text-shadow: none; }
+/* only large headings get a soft shadow on photo pages; small text stays crisp */
+.has-photo main :is(h1, h2, h3):not(.h3) { text-shadow: 0 1px 2px rgb(var(--bg-rgb) / .7); }
 
 /* releases */
 .release-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 150px), 1fr)); gap: 16px; padding-top: 8px; }
@@ -364,3 +364,10 @@ body.music-page .pill:not(.solid):not(.tab.on):not(.k-head .pill):hover { backgr
 @supports (-webkit-backdrop-filter: none) {
   .site-nav.scrolled { -webkit-backdrop-filter: blur(6px) saturate(160%); }
 }
+
+/* music page: selected tab in Cupid */
+body.music-page .tab.on, body.music-page .tab.on:hover { background: var(--cupid); border-color: var(--cupid); color: var(--deep); }
+/* kolanut.fm follow button: always Cupid with Deep text, Space on hover */
+.k-head a.pill.k-follow { background: var(--cupid) !important; border-color: var(--cupid) !important; color: var(--deep) !important; }
+.k-head a.pill.k-follow:hover { background: var(--space) !important; border-color: var(--space) !important; color: var(--deep) !important; }
+.k-logo { display: block; margin: 0 auto 12px; max-width: min(240px, 70%); max-height: 110px; object-fit: contain; }

@@ -2,9 +2,20 @@ import { defineCollection } from 'astro:content';
 import { glob } from 'astro/loaders';
 import { z } from 'astro/zod';
 
+// The admin writes `null` for fields left empty (e.g. an untouched group of links).
+// Treat null exactly like "not filled in" so an empty field can never break the build.
+const stripNulls = (v: unknown): unknown => {
+  if (Array.isArray(v)) return v.filter((x) => x !== null).map(stripNulls);
+  if (v && typeof v === 'object' && !(v instanceof Date)) {
+    return Object.fromEntries(Object.entries(v).filter(([, x]) => x !== null).map(([k, x]) => [k, stripNulls(x)]));
+  }
+  return v;
+};
+const clean = <T extends z.ZodTypeAny>(schema: T) => z.preprocess(stripNulls, schema);
+
 const gigs = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/gigs' }),
-  schema: z.object({
+  schema: clean(z.object({
     venue: z.string(),
     city: z.string(),
     country: z.string().optional().default(''),
@@ -16,24 +27,24 @@ const gigs = defineCollection({
     ticket_label: z.string().optional().default('get tickets 🎫'),
     flyer: z.string().optional().default(''),
     hidden: z.boolean().optional().default(false),
-  }),
+  })),
 });
 
 const mixes = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/mixes' }),
-  schema: z.object({
+  schema: clean(z.object({
     title: z.string(),
     date: z.coerce.date(),
     url: z.string(),
     description: z.string().optional().default(''),
     featured: z.boolean().optional().default(false),
     hidden: z.boolean().optional().default(false),
-  }),
+  })),
 });
 
 const drops = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/drops' }),
-  schema: z.object({
+  schema: clean(z.object({
     title: z.string(),
     edition: z.string().optional().default(''),
     date: z.coerce.date(),
@@ -47,12 +58,12 @@ const drops = defineCollection({
     rsvp_label: z.string().optional().default('get an invite 🎟️'),
     sold_out: z.boolean().optional().default(false),
     hidden: z.boolean().optional().default(false),
-  }),
+  })),
 });
 
 const kolanut = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/kolanut' }),
-  schema: z.object({
+  schema: clean(z.object({
     episode: z.string(),
     title: z.string(),
     guest: z.string().optional().default(''),
@@ -60,7 +71,7 @@ const kolanut = defineCollection({
     url: z.string(),
     description: z.string().optional().default(''),
     hidden: z.boolean().optional().default(false),
-  }),
+  })),
 });
 
 const platformLinks = z.object({
@@ -79,7 +90,7 @@ const platformLinks = z.object({
 
 const releases = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/releases' }),
-  schema: z.object({
+  schema: clean(z.object({
     title: z.string(),
     type: z.enum(['single', 'ep', 'album']).default('single'),
     release_date: z.coerce.date(),
@@ -101,7 +112,7 @@ const releases = defineCollection({
     dj_pack_label: z.string().optional().default('download dj pack'),
     dj_pack_note: z.string().optional().default(''),
     hidden: z.boolean().optional().default(false),
-  }),
+  })),
 });
 
 export const collections = { gigs, mixes, drops, kolanut, releases };

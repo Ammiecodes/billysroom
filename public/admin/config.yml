@@ -203,6 +203,7 @@ collections:
           - { name: soundcloud, label: soundcloud link, widget: string }
           - { name: youtube, label: youtube link, widget: string, required: false }
           - { name: x, label: x link, widget: string, required: false }
+          - { name: kolanut_logo, label: kolanut.fm logo, widget: image, required: false, hint: 'svg or transparent png — replaces the kolanut.fm text in the box' }
           - { name: kolanut_intro, label: kolanut.fm intro, widget: text }
           - { name: kolanut_instagram, label: kolanut.fm instagram link, widget: string, required: false }
           - { name: kit_form_id, label: kit form id, widget: string, hint: 'the number in your kit form link' }

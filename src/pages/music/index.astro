@@ -57,10 +57,10 @@ const defaultTab = releases.length ? 'releases' : 'mixes';
 
   <section id="kolanut" class="tab-panel kolanut" role="tabpanel" aria-label="kolanut.fm">
     <div class="k-head">
-      <h2 class="k-title">kolanut.fm</h2>
+      {site.kolanut_logo ? <h2 style="margin:0"><img class="k-logo" src={site.kolanut_logo} alt="kolanut.fm" /></h2> : <h2 class="k-title">kolanut.fm</h2>}
       <p class="k-intro">{site.kolanut_intro}</p>
       {episodes.length === 0 && <p class="k-soon">coming soon</p>}
-      {site.kolanut_instagram && <a class="pill small" href={site.kolanut_instagram} target="_blank" rel="noopener">follow kolanut.fm for updates ↗</a>}
+      {site.kolanut_instagram && <a class="pill small k-follow" href={site.kolanut_instagram} target="_blank" rel="noopener">follow kolanut.fm for updates ↗</a>}
     </div>
     {episodes.map((e) => (
       <article class="session">
