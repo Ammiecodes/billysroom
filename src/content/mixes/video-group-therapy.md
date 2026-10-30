@@ -1,6 +1,7 @@
 ---
-title: "group therapy viii — opening set"
-date: 2025-05-23
+title: group therapy viii — opening set
 url: https://www.youtube.com/watch?v=_WUP4VPKblc
-description: "opening set at group therapy viii, lagos. 23.05.2025"
+date: 2025-05-23
+description: opening set at group therapy viii in lagos
+hidden: false
 ---
