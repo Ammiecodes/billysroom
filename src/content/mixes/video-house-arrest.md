@@ -1,6 +1,7 @@
 ---
-title: "house arrest owambe — opening set"
-date: 2025-08-15
+title: house arrest owambe — opening set
 url: https://www.youtube.com/watch?v=YAogDQA3XUg
-description: "opening set at house arrest owambe, 15 august 2025"
+date: 2025-08-15
+description: 'opening set at house arrest: owambe'
+hidden: false
 ---
