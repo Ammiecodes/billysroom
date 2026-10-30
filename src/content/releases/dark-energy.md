@@ -17,7 +17,7 @@ player_url: ''
 presave_url: https://orcd.co/darkenergy
 presave: null
 links:
-  spotify: https://open.spotify.com/track/05w5YY7F7W3PKC1AxGmaCr?si=GEn2-wA0QaK0JRA9JjoJ8Q&utm_source=copy-link
+  spotify: ‪https://open.spotify.com/track/05w5YY7F7W3PKC1AxGmaCr?si=qOT8iReqTbuHf7rM_AXwxg
   apple_music: https://music.apple.com/ng/album/dark-energy-single/6821921785
   youtube_music: ''
   audiomack: ''
