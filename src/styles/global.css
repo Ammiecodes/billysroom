@@ -67,7 +67,10 @@ img { max-width: 100%; display: block; }
 /* page backdrop: the page photo exactly as uploaded (no wash), or the page colour */
 .backdrop {
   /* 100lvh = the full screen height even when phone toolbars are hidden, so no gap appears as they slide */
-  position: fixed; top: 0; left: 0; right: 0; height: 100vh; height: 100lvh; z-index: -1;
+  /* extends under the status bar and toolbars (viewport-fit=cover) so the photo goes edge to edge */
+  position: fixed; top: 0; left: 0; right: 0; z-index: -1;
+  height: calc(100vh + env(safe-area-inset-top) + env(safe-area-inset-bottom));
+  height: calc(100lvh + env(safe-area-inset-top) + env(safe-area-inset-bottom));
   background-color: var(--bg);
   background-size: cover; background-position: center;
 }
@@ -76,7 +79,7 @@ img { max-width: 100%; display: block; }
 .site-nav {
   position: sticky; top: 0; z-index: 10; transition: background-color .2s;
   display: flex; justify-content: center; gap: clamp(16px, 4vw, 28px);
-  padding: 14px 16px;
+  padding: calc(14px + env(safe-area-inset-top)) calc(16px + env(safe-area-inset-right)) 14px calc(16px + env(safe-area-inset-left));
   font-family: var(--f-nav); font-weight: 800; font-size: 15px; letter-spacing: .01em;
   background: transparent;
 }
@@ -189,7 +192,7 @@ input[type='date']::-webkit-calendar-picker-indicator { filter: invert(.9); }
 .form input:focus, .form textarea:focus { border-color: var(--ink); outline: none; }
 
 /* footer */
-.foot { display: flex; justify-content: center; gap: 22px; padding: 28px 0 36px; }
+.foot { display: flex; justify-content: center; gap: 22px; padding: 28px 0 calc(36px + env(safe-area-inset-bottom)); }
 .foot a { opacity: .9; display: inline-grid; place-items: center; width: 40px; height: 40px; }
 .foot svg { width: 24px; height: 24px; fill: currentColor; }
 .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
@@ -237,7 +240,7 @@ input[type='date']::-webkit-calendar-picker-indicator { filter: invert(.9); }
 .tab.on, .tab.on:hover { background: var(--lagos); border-color: var(--lagos); color: var(--deep); }
 
 /* home */
-.hero { min-height: calc(100svh - 52px); display: flex; flex-direction: column; justify-content: center; padding-bottom: 48px; position: relative; }
+.hero { min-height: calc(100svh - 52px - env(safe-area-inset-top)); display: flex; flex-direction: column; justify-content: center; padding-bottom: 48px; position: relative; }
 .hero .logo { font-size: clamp(38px, 9vw, 52px); margin-top: 0; }
 .scroll-cue { position: absolute; left: 50%; bottom: 8px; translate: -50% 0; text-decoration: none; font-size: 22px; opacity: .7; padding: 8px; animation: bob 2.4s ease-in-out infinite; }
 @keyframes bob { 50% { translate: -50% 6px; } }
@@ -404,3 +407,6 @@ body.music-page .tab.on, body.music-page .tab.on:hover { background: var(--cupid
 .remind .signup .pill.solid { background: transparent; border-color: var(--ink); color: var(--ink); }
 .remind .signup .pill.solid:hover { background: var(--lagos); border-color: var(--lagos); color: var(--deep); }
 :is(.tone-space, .tone-cupid, .tone-lagos) :is(.rel-kicker, .countdown, .rel-badge, .kicker) { color: var(--deep); }
+
+/* photo pages: the photo layer carries no colour of its own, so phone browsers have nothing to stretch into bands */
+.has-photo .backdrop { background-color: transparent; }

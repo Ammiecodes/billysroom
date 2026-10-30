@@ -21,11 +21,12 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>{fullTitle}</title>
   <meta name="description" content={description} />
   <link rel="canonical" href={canonical} />
-  <meta name="theme-color" content={edges ? edges.top : (toneHex[tone] || toneHex.deep)} />
+  {/* photo pages: no browser-bar colour — the photo runs edge to edge behind the status bar and toolbars */}
+  {!bg && <meta name="theme-color" content={toneHex[tone] || toneHex.deep} />}
   {edges && <style set:html={`html{background:${edges.bottom}!important}`}></style>}
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="[billysroom]" />
