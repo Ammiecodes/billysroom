@@ -19,7 +19,7 @@ These terms apply to every booking of billysroom ("the DJ", "I", "me") by a prom
 - Payment is by bank transfer to the account given in the confirmation email. Bookings outside Nigeria are invoiced in the currency agreed in writing.
 - Any transfer or bank charges are covered by you, so the full fee is received.
 - If the balance has not been received 24 hours before the set, I am not obliged to perform. This is treated as a cancellation by you (section 3), and the deposit is kept.
-- If I agree to perform before the balance is paid, it must be paid in full by the end of the event day. After that, a **late fee of 5% of the unpaid balance** is added for every week (or part of a week) it remains unpaid, until it is paid in full.
+- If I agree to perform before the balance is paid, it must be paid in full by the end of the event day. After that, a **late fee of 5% of the unpaid balance** is added for every week (or part of a week) it remains unpaid, up to a maximum of **100% of the unpaid balance**, until it is paid in full.
 
 ## 3. if you cancel or postpone
 
