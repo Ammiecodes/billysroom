@@ -47,6 +47,7 @@ html { background: var(--deep); }
 html:has(.tone-earth) { background: var(--earth); }
 html:has(.tone-tobacco) { background: var(--tobacco); }
 html:has(.tone-boiler) { background: var(--boiler); }
+html:has(.tone-black) { background: #000; }
 html:has(.tone-chill) { background: var(--chill); }
 html:has(.tone-space) { background: var(--space); }
 html:has(.tone-cupid) { background: var(--cupid); }
@@ -410,3 +411,18 @@ body.music-page .tab.on, body.music-page .tab.on:hover { background: var(--cupid
 
 /* photo pages: the photo layer carries no colour of its own, so phone browsers have nothing to stretch into bands */
 .has-photo .backdrop { background-color: transparent; }
+
+/* booking terms (hidden page) */
+.terms { font-size: 15px; line-height: 1.65; }
+.terms h2 { font-family: var(--f-mono); font-weight: 500; font-size: 14px; color: var(--lagos); margin: 34px 0 10px; text-transform: lowercase; }
+.terms p, .terms li { color: var(--space); }
+.terms ul { padding-left: 18px; margin: 0; display: grid; gap: 6px; }
+.terms strong { color: var(--ink); font-weight: 600; }
+.terms table { width: 100%; border-collapse: collapse; margin: 12px 0 16px; font-size: 14px; }
+.terms th, .terms td { text-align: left; padding: 10px 8px; border-bottom: 1px solid var(--faint); vertical-align: top; }
+.terms th { font-family: var(--f-mono); font-weight: 500; font-size: 12px; color: var(--lagos); }
+.terms td:first-child { white-space: nowrap; }
+@media (max-width: 420px) { .terms td:first-child { white-space: normal; } }
+
+/* black background (booking terms page) with Space text */
+.tone-black { --bg: #000; --bg-rgb: 0 0 0; --ink: var(--space); --muted: var(--space); }
