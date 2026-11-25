@@ -19,6 +19,7 @@ These terms apply to every booking of billysroom ("the DJ", "I", "me") by a prom
 - Payment is by bank transfer to the account given in the confirmation email. Bookings outside Nigeria are invoiced in the currency agreed in writing.
 - Any transfer or bank charges are covered by you, so the full fee is received.
 - If the balance has not been received 24 hours before the set, I am not obliged to perform. This is treated as a cancellation by you (section 3), and the deposit is kept.
+- If I agree to perform before the balance is paid, it must be paid in full by the end of the event day. After that, a **late fee of 5% of the unpaid balance** is added for every week (or part of a week) it remains unpaid, until it is paid in full.
 
 ## 3. if you cancel or postpone
 
@@ -33,7 +34,7 @@ Cancellations must be made in writing to dj@billysroom.today. Notice is counted 
 
 **Postponing instead of cancelling:** if you give at least 7 days' notice, you can move the booking **once** to a new date within **6 months**, subject to my availability, with no admin fee. Your deposit carries over to the new date. If the new date is later cancelled, the table above applies, counted from the new date. A postponement requested with less than 7 days' notice is treated as a cancellation.
 
-Refunds are paid within **14 days** of the written cancellation.
+Refunds are paid within **7 days** of the written cancellation.
 
 ## 4. if I cancel
 
