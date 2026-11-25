@@ -1,0 +1,18 @@
+---
+// Hidden page: not in the menu, the sitemap or search results. Linked from the booking form on /press.
+import Base from '../layouts/Base.astro';
+import * as terms from '../data/booking-terms.md';
+const { Content, frontmatter } = terms;
+const updated = frontmatter.updated
+  ? new Intl.DateTimeFormat('en-GB', { timeZone: 'Africa/Lagos', day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(frontmatter.updated)).toLowerCase()
+  : '';
+---
+<Base tone="black" title={frontmatter.title || 'booking terms'} description="booking terms for billysroom">
+  <meta slot="head" name="robots" content="noindex, nofollow" />
+  <article class="terms narrow">
+    <h1 class="logo page" style="font-size:30px;margin-bottom:6px">{frontmatter.title || 'booking terms'}</h1>
+    {updated && <p class="meta" style="text-align:center;margin:0 0 28px">last updated {updated}</p>}
+    <Content />
+    <p style="text-align:center;margin-top:36px"><a class="pill solid" href="/press#book" style="display:inline-flex;padding:10px 24px">book billysroom</a></p>
+  </article>
+</Base>

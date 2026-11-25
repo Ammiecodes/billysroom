@@ -54,7 +54,7 @@ const paras = site.bio_long.split(/\n\s*\n/);
         <label>fee / budget<input name="budget" placeholder="optional" /></label>
         <label>anything else<textarea name="notes" rows="4"></textarea></label>
         <button class="pill solid" type="submit">send booking request</button>
-        <p class="meta" style="text-align:center">opens your email app with the details filled in.</p>
+        <p class="meta" style="text-align:center">opens your email app with the details filled in.<br />all bookings are subject to my <a href="/booking-terms">booking terms</a>.</p>
       </form>
       <p class="meta" style="text-align:center;margin-top:18px">
         bookings: <a href={`mailto:${site.booking_email}`}>{site.booking_email}</a>
@@ -71,7 +71,7 @@ const paras = site.bio_long.split(/\n\s*\n/);
       const subject = `booking request: ${g('event')} — ${g('date')}`;
       const body = [
         `name: ${g('name')}`, `event / promoter: ${g('event')}`, `date: ${g('date')}`,
-        `city & venue: ${g('where')}`, `set length & slot: ${g('slot')}`, `fee / budget: ${g('budget')}`, '', g('notes'),
+        `city & venue: ${g('where')}`, `set length & slot: ${g('slot')}`, `fee / budget: ${g('budget')}`, '', g('notes'), '', `booking terms: ${location.origin}/booking-terms`,
       ].join('\n');
       location.href = `mailto:${f.dataset.to}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     });
