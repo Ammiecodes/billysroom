@@ -182,6 +182,14 @@ collections:
   - name: settings
     label: site info
     files:
+      - name: booking_terms
+        label: booking terms (hidden page)
+        file: src/data/booking-terms.md
+        format: frontmatter
+        fields:
+          - { name: title, label: page title, widget: string, default: booking terms }
+          - { name: updated, label: last updated, widget: datetime, time_format: false, hint: 'change this whenever you edit the terms' }
+          - { name: body, label: terms, widget: markdown, hint: 'live at billysroom.today/booking-terms — not shown in the menu' }
       - name: site
         label: bio, links & contacts
         file: src/data/site.json
