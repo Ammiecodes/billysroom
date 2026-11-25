@@ -6,9 +6,9 @@ These terms apply to every booking of billysroom ("the DJ", "I", "me") by a prom
 
 ## 1. confirming a booking
 
-- A date is only confirmed once you have accepted the confirmation email **and** paid the deposit.
-- The deposit is **70% of the fee**, unless otherwise agreed in writing (for example, a 50% deposit).
-- Dates are not held without a deposit. A date offered to you is held for **3 days**; after that it may go to another booking.
+- A date is only confirmed once your deposit has been paid and its receipt confirmed.
+- The deposit is **70% of the fee**, unless otherwise agreed in writing.
+- Dates are not held without a deposit. A date offered to you may also be offered to others, and the first confirmed deposit secures it.
 - Paying the deposit means you have read and accepted these terms.
 
 ## 2. fees and payment
@@ -26,11 +26,12 @@ Cancellations must be made in writing to dj@billysroom.today. Notice is counted 
 
 | notice given | what happens |
 |---|---|
-| **30 days or more** | Deposit refunded, minus a **10% admin fee** |
-| **14–29 days** | Deposit is non-refundable |
-| **Less than 14 days** | The **full fee** is due, including the remaining balance |
+| **30 days or more** | **Full refund** of the deposit |
+| **7–29 days** | Deposit refunded, minus a **10% admin fee** |
+| **Less than 7 days** | Deposit is non-refundable (the remaining balance is not due) |
+| **Within 24 hours of the event** | The **full fee** is due (deposit plus remaining balance) |
 
-**Postponing instead of cancelling:** if you give at least 14 days' notice, you can move the booking **once** to a new date within **6 months**, subject to my availability. Your deposit carries over to the new date. If the new date is later cancelled, the cancellation terms above apply from the original deposit.
+**Postponing instead of cancelling:** if you give at least 7 days' notice, you can move the booking **once** to a new date within **6 months**, subject to my availability, with no admin fee. Your deposit carries over to the new date. If the new date is later cancelled, the table above applies, counted from the new date. A postponement requested with less than 7 days' notice is treated as a cancellation.
 
 Refunds are paid within **14 days** of the written cancellation.
 
@@ -65,7 +66,6 @@ Equipment should be set up, connected and tested before my set starts. If equipm
 
 ## 8. safety and conduct
 
-- The booth should be kept clear of anyone not involved in the set.
 - You are responsible for providing a safe working environment. If I feel unsafe, or I am harassed, I may stop performing and leave, and the full fee remains due.
 
 ## 9. changes to these terms
