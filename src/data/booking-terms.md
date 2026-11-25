@@ -27,7 +27,7 @@ Cancellations must be made in writing to dj@billysroom.today. Notice is counted 
 | notice given | what happens |
 |---|---|
 | **30 days or more** | **Full refund** of the deposit |
-| **7–29 days** | Deposit refunded, minus a **10% admin fee** |
+| **7–29 days** | Deposit refunded, minus an admin fee of **10% of the full fee** |
 | **Less than 7 days** | Deposit is non-refundable (the remaining balance is not due) |
 | **Within 24 hours of the event** | The **full fee** is due (deposit plus remaining balance) |
 
